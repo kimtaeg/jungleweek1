@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h1 style="font-size:26px; font-style:normal; font-family: jua;">회원가입</h1>
+        <p style="font-size:14px; font-style: normal; color:#7D726A">몇 가지만 알려주시면 바로 시작할 수 있어요</p>
+        
+        <div style="display:flex; gap:8px; align-items:center;">
+            <div style="width: 293.5px; padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid #E8E0D8;
+            display:flex; align-items:center;
+            background: #FBF8F5; min-width:0;">
+                <img
+                    src="{{ url_for('static', filename='images/SVG.png') }}"
+                    style="width:17px; height:17px; padding-right:10px;">
+                <input
+                    type="text"
+                    placeholder="아이디"
+                    style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+            </div>
+            <button style="
+                flex-shrink:0;
+                border-radius:12px;
+                border:1.5px solid #338D6B;
+                color:#338D6B;
+                padding:12px 14px;
+                cursor:pointer;
+                background:transparent;">중복확인</button>
+        </div>
+    </body>
+</html>
