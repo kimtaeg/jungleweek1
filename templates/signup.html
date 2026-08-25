@@ -2,115 +2,95 @@
 <html lang="ko">
     <head>
         <meta charset="utf-8"/>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            'brand-bg': '#FEFBF8',
+                            'input-bg': '#FBF8F5',
+                            'input-border': '#E8E0D8',
+                            'text-muted': '#7D726A',
+                            'text-placeholder': '#A49D97',
+                            'brand-green': '#338D6B',
+                            'brand-pink': '#E68485',
+                            'brand-pink-dark': '#BB565A',
+                        },
+                        fontFamily: {
+                            jua: ['jua'],
+                        },
+                    },
+                },
+            }
+        </script>
     </head>
     <body>
-        <div style="display: flex; width: 100vw; height: 100vh;">
+        <div class="flex w-screen h-screen">
             <!-- 왼쪽 -->
-            <div style="width:40%; height: 100%;">
-                <img 
+            <div class="w-2/5 h-full">
+                <img
                     src="{{ url_for('static', filename='images/Left_brand_panel.png') }}"
-                    style="width:100%; height:100%; object-fit:cover; display:block;">
+                    class="w-full h-full object-cover block">
             </div>
             <!-- 오른쪽 -->
-            <div style="width:60%; height:100%; align-items: center; justify-content: center; display:flex; background-color: #FEFBF8;">
-                <div style="width:380px; display:flex; flex-direction:column;">
-                    <h1 style="font-size:26px; font-style:normal; font-family: jua;">회원가입</h1>
-                    <p style="font-size:14px; font-style: normal; color:#7D726A">몇 가지만 알려주시면 바로 시작할 수 있어요</p>
-                    
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <div style="width: 293.5px; padding: 12px 15px;
-                        border-radius: 12px;
-                        border: 1px solid #E8E0D8;
-                        display:flex; align-items:center;
-                        background: #FBF8F5; min-width:0;">
+            <div class="w-3/5 h-full flex items-center justify-center bg-brand-bg">
+                <div class="w-[380px] flex flex-col">
+                    <h1 class="text-[26px] not-italic font-jua">회원가입</h1>
+                    <p class="text-sm mt-[10px] not-italic text-text-muted font-style: normal">몇 가지만 알려주시면 바로 시작할 수 있어요</p>
+
+                    <div class="flex gap-2 items-center  mt-[26px]">
+                        <div class="w-[293.5px] px-[15px] py-3 rounded-xl border border-input-border flex items-center bg-input-bg min-w-0">
                             <img
                                 src="{{ url_for('static', filename='images/SVG.png') }}"
-                                style="width:17px; height:17px; padding-right:10px;">
+                                class="pr-2.5">
                             <input
                                 type="text"
                                 placeholder="아이디"
-                                style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+                                class="text-sm text-text-placeholder border-none outline-none bg-transparent flex-1 min-w-0">
                         </div>
-                        <button style="
-                            flex-shrink:0;
-                            border-radius:12px;
-                            border:1.5px solid #338D6B;
-                            color:#338D6B;
-                            padding:12px 14px;
-                            cursor:pointer;
-                            width: 78.5px;
-                            background:transparent;">중복확인</button>
+                        <button class="shrink-0 rounded-xl border-[1.5px] border-brand-green text-brand-green py-3 px-3.5 cursor-pointer bg-transparent">중복확인</button>
                     </div>
 
-                    <div style="width: 380px; padding: 12px 15px;
-                        border-radius: 12px;
-                        margin-top: 12px;
-                        border: 1px solid #E8E0D8;
-                        display:flex; align-items:center;
-                        background: #FBF8F5; min-width:0;">
+                    <div class="w-[380px] px-[15px] py-3 rounded-xl mt-3 border border-input-border flex items-center bg-input-bg min-w-0">
                             <img
                                 src="{{ url_for('static', filename='images/star.png') }}"
-                                style="width:17px; height:17px; padding-right:10px;">
+                                class="pr-2.5">
                             <input
                                 type="text"
                                 placeholder="닉네임"
-                                style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+                                class="text-sm text-text-placeholder border-none outline-none bg-transparent flex-1 min-w-0">
                     </div>
 
-                    <div style="width: 380px; padding: 12px 15px;
-                        border-radius: 12px;
-                        margin-top: 12px;
-                        border: 1px solid #E8E0D8;
-                        display:flex; align-items:center;
-                        background: #FBF8F5; min-width:0;">
+                    <div class="w-[380px] px-[15px] py-3 rounded-xl mt-3 border border-input-border flex items-center bg-input-bg min-w-0">
                             <img
                                 src="{{ url_for('static', filename='images/pwd.png') }}"
-                                style="width:17px; height:17px; padding-right:10px;">
+                                class="pr-2.5">
                             <input
                                 type="text"
                                 placeholder="비밀번호"
-                                style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+                                class="text-sm text-text-placeholder border-none outline-none bg-transparent flex-1 min-w-0">
                     </div>
 
-                    <div style="width: 380px; padding: 12px 15px;
-                        border-radius: 12px;
-                        margin-top: 12px;
-                        border: 1px solid #E8E0D8;
-                        display:flex; align-items:center;
-                        background: #FBF8F5; min-width:0;">
+                    <div class="w-[380px] px-[15px] py-3 rounded-xl mt-3 border border-input-border flex items-center bg-input-bg min-w-0">
                             <img
                                 src="{{ url_for('static', filename='images/pwd.png') }}"
-                                style="width:17px; height:17px; padding-right:10px;">
+                                class="pr-2.5">
                             <input
                                 type="text"
                                 placeholder="비밀번호 확인"
-                                style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+                                class="text-sm text-text-placeholder border-none outline-none bg-transparent flex-1 min-w-0">
                     </div>
 
-                    <label style="margin-top: 19.5px; 
-                        display: block;
-                        font-size: 13px;
-                        color: #7D726A;;
-                        ">
-                        <input type="checkbox" style="width: 16px; height: 16px; border-radius: 2.5px; background: #E68485;">
+                    <label class="mt-[19.5px] block text-[13px] text-text-muted">
+                        <input type="checkbox" class="w-4 h-4 rounded-sm bg-[#E68485]">
                         <span>이용약관 및 개인정보처리방침에 동의합니다</span>
                     </label>
 
                     <!--Input은 패딩값이랑 border값이 있어 380이고 버튼은 없으니 412로 해야 크기가 맞다-->
-                    <button style="width: 412px; height: 48px;
-                        border-radius: 12px;
-                        margin-top: 20px;
-                        background: #E68485;
-                        display: flex;
-                        padding: 16px 0;
-                        border: none;
-                        box-shadow: none;
-                        color: white;
-                        font-size:16px;
-                        justify-content: center;
-                        align-items: center;">가입하기</button>
+                    <button class="w-[412px] h-12 rounded-xl mt-5 bg-brand-pink flex py-4 border-none shadow-none text-white text-base justify-center items-center">가입하기</button>
 
-                    <p style="text-align:center; font-size: 13px; color: #7D726A;">이미 계정이 있으신가요?<a href="#" style="font-weight: bold; color: #BB565A;">로그인</a></p>
+                    <p class="text-center text-[13px] mt-[20px] text-text-muted">이미 계정이 있으신가요?<a href="#" class="font-bold text-brand-pink-dark">로그인</a></p>
                 </div>
             </div>
         </div>
