@@ -1,0 +1,36 @@
+// user collection
+{
+    "_id": ObjectID,  // user 고유 id(키) (MongoDB에서 자동 생성)
+    "login_id": "dfss",     
+    "user_pwd":"암호화된 pwd",
+    "username": "둘리",
+    "user_img": "s3 url",   // s3에서 저장된 이미지 url
+    "user_descrpition": "안녕하세요",   
+    "created_at": ISODate,  // 생성 날짜 (몽고 DB 기본 데이트 타입0
+}
+
+// blog collection
+{
+    "_id": ObjectID,  // 게시글 고유 id
+    "authour_id": ObjectID,  // user_id 참조
+    "likes": 3,
+    "content": "오늘의 하루...",    
+    "created_at": ISODate,  // 생성 날짜 (몽고 DB 기본 데이트 타입)
+}
+
+// guestbook collection
+{
+    "_id": ObjectID,    // 방명록 고유 id
+    "authour_id": ObjectID,  // user_id 참조
+    "writer_id": ObjectID,
+    "content": "하이루",
+    "created_at": ISODate,  // 생성 날짜 (몽고 DB 기본 데이트 타입)
+}
+
+// bgm collection
+{
+    "_id": ObjectID,    // bgm 고유 id
+    "authour_id": ObjectID,  // user_id 참조
+    "title": "hype boy",
+    "writer": "뉴진스",
+}
