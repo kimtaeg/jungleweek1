@@ -23,11 +23,17 @@
         <div class="bg-card rounded-2xl shadow-sm overflow-hidden">
 
         <div class="relative h-16 bg-gradient-to-r from-rose-200 to-orange-100">
+            <div class="absolute top-2 right-2 flex gap-2">
+                <button id="settings-button" type="button"
+                        class="w-7 h-7 flex items-center justify-center rounded-full bg-white/80 hover:bg-white shadow">
+                    <img src="{{ url_for('static', filename='images/pen.png') }}" class="w-3.5 h-3.5" alt="수정">
+                </button>
+            </div>
         </div>
 
         <div class="relative -mt-8 flex flex-col items-center pb-4">
 
-            <div class="flex w-[80px] h-[80px] p-[25px] justify-center items-center rounded-[40px] border-[4px] border-[#FEFBF8] bg-[#E68485] shadow-[0_6px_14px_0_rgba(54,44,36,0.12)] overflow-hidden">
+            <div id="profile-circle" class="flex w-[80px] h-[80px] p-[25px] justify-center items-center rounded-[40px] border-[4px] border-[#FEFBF8] shadow-[0_6px_14px_0_rgba(54,44,36,0.12)] overflow-hidden" style="background-color: {{ profile_color }}">
                 <img
                    src="{{ url_for('static', filename='images/profile.svg') }}"
                      alt="프로필 아이콘"
@@ -39,11 +45,11 @@
             <div class="pt-2 pb-5 px-5 text-center">
 
                 <h2 id="profile-name" class="text-base font-bold text-center">
-                    몽글몽글
+                    {{ username }}
                 </h2>
 
-                <p class="flex h-[31px] mt-[10px] px-[14px] py-[6px] justify-center items-center rounded-full bg-[#FBF0E6] text-[13px] text-[#7D726A] text-center font-['Gowun_Dodum'] text-[13px] font-normal leading-normal">
-                    오늘도 몽글몽글하게:)
+                <p id="profile-desc" class="flex h-[31px] mt-[10px] px-[14px] py-[6px] justify-center items-center rounded-full bg-[#FBF0E6] text-[13px] text-[#7D726A] text-center font-['Gowun_Dodum'] text-[13px] font-normal leading-normal">
+                    {{ profile_desc }}
                 </p>
 
              <div class="flex w-[238px] h-[55px] mt-[18px] justify-center border-t border-[#E8E0D8]">
@@ -78,6 +84,59 @@
 </div>
 
 
+            </div>
+        </div>
+
+        <div id="settings-popup" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-[#FEFBF8] rounded-[24px] p-6 w-[320px] shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-sm">프로필 수정</h3>
+                    <button id="settings-close-button" type="button" class="text-stone-400 hover:text-stone-600">✕</button>
+                </div>
+
+                <form id="profile-edit-form">
+
+                    <div class="flex justify-center">
+                        <button type="button" id="profile-img-trigger"
+                                class="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow">
+                            <img id="profile-img"
+                                 src="{{ url_for('static', filename='images/profile.svg') }}"
+                                 alt="프로필 이미지"
+                                 class="w-full h-full object-contain"
+                                 style="background-color: {{ profile_color }}">
+                        </button>
+                        <input id="edit-profile-img" type="file" accept="image" class="hidden">
+                    </div>
+
+                    <p class="text-center text-xs text-stone-500 mt-3 mb-2">프로필 색상</p>
+                    <div id="color-swatches" class="flex justify-center gap-3 mb-5">
+                        {% for color in ['#E68485', '#77C4A3', '#BAA4E2', '#E7B375', '#71BCDF'] %}
+                        <button type="button" data-color="{{ color }}"
+                                class="color-swatch w-7 h-7 rounded-full ring-2 ring-offset-2 {{ 'ring-current' if color == profile_color else '' }}"
+                                style="background-color: {{ color }}; {{ '--tw-ring-color: ' ~ color ~ ';' if color == profile_color else '--tw-ring-color: transparent;' }}"></button>
+                        {% endfor %}
+                    </div>
+
+                    <label for="edit-name" class="block text-xs text-stone-500 mb-1">닉네임</label>
+                    <input id="edit-name" type="text" value="{{ username }}"
+                           class="w-full rounded-xl border border-stone-200 p-3 text-sm mb-4 focus:outline-none focus:ring-1 focus:ring-rose-200">
+
+                    <label for="edit-desc" class="block text-xs text-stone-500 mb-1">소개글</label>
+                    <textarea id="edit-desc" rows="2"
+                              class="w-full rounded-xl border border-stone-200 p-3 text-sm mb-5 resize-none focus:outline-none focus:ring-1 focus:ring-rose-200">{{ profile_desc }}</textarea>
+
+                    <div class="flex justify-end gap-2">
+                        <button type="button" id="settings-cancel-button"
+                                class="px-4 py-2 rounded-xl text-sm text-stone-500 bg-white border border-stone-200 hover:bg-stone-50">
+                            취소
+                        </button>
+                        <button type="submit"
+                                class="px-4 py-2 rounded-xl text-sm text-white bg-[#E68485] hover:opacity-90">
+                            저장
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
 
@@ -380,32 +439,77 @@
     </div>
 
     <script>
-            const editButton = document.getElementById('profile-edit-button');
             const editForm = document.getElementById('profile-edit-form');
             const profileImage = document.getElementById('profile-img');
+            const profileImgTrigger = document.getElementById('profile-img-trigger');
             const imageInput = document.getElementById('edit-profile-img');
 
-            editButton.addEventListener('click', () => {
-                editForm.hidden = !editForm.hidden;
-                editButton.setAttribute('aria-expanded', String(!editForm.hidden));
-                if (!editForm.hidden) document.getElementById('edit-name').focus();
+            if (profileImgTrigger && imageInput) {
+                profileImgTrigger.addEventListener('click', () => imageInput.click());
+            }
+
+            if (imageInput && profileImage) {
+                imageInput.addEventListener('change', () => {
+                    const image = imageInput.files[0];
+                    if (!image) return;
+                    const reader = new FileReader();
+                    reader.addEventListener('load', () => { profileImage.src = reader.result; });
+                    reader.readAsDataURL(image);
+                });
+            }
+
+            const colorSwatches = document.querySelectorAll('.color-swatch');
+            const initialSwatch = document.querySelector('.color-swatch.ring-current');
+            let selectedColor = initialSwatch ? initialSwatch.dataset.color : (colorSwatches[0] ? colorSwatches[0].dataset.color : '#E68485');
+
+            colorSwatches.forEach((swatch) => {
+                swatch.addEventListener('click', () => {
+                    colorSwatches.forEach((other) => other.classList.remove('ring-current'));
+                    colorSwatches.forEach((other) => other.style.setProperty('--tw-ring-color', 'transparent'));
+                    swatch.classList.add('ring-current');
+                    swatch.style.setProperty('--tw-ring-color', swatch.dataset.color);
+                    selectedColor = swatch.dataset.color;
+                    if (profileImage) profileImage.style.backgroundColor = selectedColor;
+                });
             });
 
-            imageInput.addEventListener('change', () => {
-                const image = imageInput.files[0];
-                if (!image) return;
-                const reader = new FileReader();
-                reader.addEventListener('load', () => { profileImage.src = reader.result; });
-                reader.readAsDataURL(image);
-            });
-            editForm.addEventListener('submit', (event) => {
-                event.preventDefault();
-                const name = document.getElementById('edit-name').value.trim();
-                const description = document.getElementById('edit-desc').value.trim();
-                if (name) document.getElementById('profile-name').textContent = name;
-                if (description) document.getElementById('profile-desc').textContent = description;
-                editForm.hidden = true;
-                editButton.setAttribute('aria-expanded', 'false');
+            if (editForm) {
+                editForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    const name = document.getElementById('edit-name').value.trim();
+                    const description = document.getElementById('edit-desc').value.trim();
+                    if (!name || !description) return;
+
+                    fetch('{{ url_for("update_profile") }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: name, description: description, color: selectedColor })
+                    })
+                        .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
+                        .then(({ ok, data }) => {
+                            if (!ok) {
+                                alert(data.message || '저장에 실패했습니다');
+                                return;
+                            }
+                            document.getElementById('profile-name').textContent = data.username;
+                            document.getElementById('profile-desc').textContent = data.profile_desc;
+                            document.getElementById('profile-circle').style.backgroundColor = data.profile_color;
+                            settingsPopup.hidden = true;
+                        })
+                        .catch(() => alert('저장 중 오류가 발생했습니다'));
+                });
+            }
+
+            const settingsButton = document.getElementById('settings-button');
+            const settingsPopup = document.getElementById('settings-popup');
+            const settingsCloseButton = document.getElementById('settings-close-button');
+            const settingsCancelButton = document.getElementById('settings-cancel-button');
+
+            settingsButton.addEventListener('click', () => { settingsPopup.hidden = false; });
+            settingsCloseButton.addEventListener('click', () => { settingsPopup.hidden = true; });
+            settingsCancelButton.addEventListener('click', () => { settingsPopup.hidden = true; });
+            settingsPopup.addEventListener('click', (event) => {
+                if (event.target === settingsPopup) settingsPopup.hidden = true;
             });
             const postSection = document.querySelector('[aria-label="게시글 목록"]');
             const sortSelect = document.getElementById('sort-select');
