@@ -1,0 +1,31 @@
+{
+  "user": {
+    "_id": "ObjectID",
+    "login_id": "dfss",
+    "user_pwd": "암호화된 pwd",
+    "username": "둘리",
+    "user_img": "s3 url",
+    "user_description": "안녕하세요",
+    "created_at": "ISODate"
+  },
+  "blog": {
+    "_id": "ObjectID",
+    "authour_id": "ObjectID",
+    "likes": 3,
+    "content": "오늘의 하루...",
+    "created_at": "ISODate"
+  },
+  "guestbook": {
+    "_id": "ObjectID",
+    "authour_id": "ObjectID",
+    "writer_id": "ObjectID",
+    "content": "하이루",
+    "created_at": "ISODate"
+  },
+  "bgm": {
+    "_id": "ObjectID",
+    "authour_id": "ObjectID",
+    "title": "hype boy",
+    "writer": "뉴진스"
+  }
+}

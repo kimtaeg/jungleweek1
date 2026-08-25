@@ -2,33 +2,174 @@
 <html lang="ko">
     <head>
         <meta charset="utf-8"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            'brand-bg': '#FEFBF8',
+                            'input-bg': '#FBF8F5',
+                            'input-border': '#E8E0D8',
+                            'text-muted': '#7D726A',
+                            'text-placeholder': '#A49D97',
+                            'brand-green': '#338D6B',
+                            'brand-pink': '#E68485',
+                            'brand-pink-dark': '#BB565A',
+                        },
+                        fontFamily: {
+                            jua: ['jua'],
+                            gowun: ['Gowun Dodum'],
+                        },
+                    },
+                },
+            }
+        </script>
     </head>
     <body>
-        <h1 style="font-size:26px; font-style:normal; font-family: jua;">회원가입</h1>
-        <p style="font-size:14px; font-style: normal; color:#7D726A">몇 가지만 알려주시면 바로 시작할 수 있어요</p>
-        
-        <div style="display:flex; gap:8px; align-items:center;">
-            <div style="width: 293.5px; padding: 12px 15px;
-            border-radius: 12px;
-            border: 1px solid #E8E0D8;
-            display:flex; align-items:center;
-            background: #FBF8F5; min-width:0;">
+        <div class="flex w-screen h-screen">
+            <!-- 왼쪽 -->
+            <div class="w-2/5 h-full">
                 <img
-                    src="{{ url_for('static', filename='images/SVG.png') }}"
-                    style="width:17px; height:17px; padding-right:10px;">
-                <input
-                    type="text"
-                    placeholder="아이디"
-                    style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+                    src="{{ url_for('static', filename='images/Left_brand_panel.png') }}"
+                    class="w-full h-full object-cover block">
             </div>
-            <button style="
-                flex-shrink:0;
-                border-radius:12px;
-                border:1.5px solid #338D6B;
-                color:#338D6B;
-                padding:12px 14px;
-                cursor:pointer;
-                background:transparent;">중복확인</button>
+            <!-- 오른쪽 -->
+            <div class="w-3/5 h-full flex items-center justify-center bg-brand-bg">
+                <div class="w-[380px] flex flex-col">
+                    <h1 class="text-[26px] not-italic font-jua">회원가입</h1>
+                    <p class="text-sm mt-[10px] not-italic text-text-muted font-style: normal font-gowun">몇 가지만 알려주시면 바로 시작할 수 있어요</p>
+
+                    <div class="flex gap-2 items-center  mt-[26px]">
+                        <div class="w-[293.5px] px-[15px] py-3 rounded-xl border border-input-border flex items-center bg-input-bg min-w-0 focus-within:ring-2 focus-within:ring-brand-pink focus-within:border-brand-pink transition">
+                            <img
+                                src="{{ url_for('static', filename='images/SVG.png') }}"
+                                class="pr-2.5">
+                            <input
+                                id="signup-id"
+                                type="text"
+                                placeholder="아이디"
+                                class="text-sm text-text-placeholder border-none outline-none bg-transparent flex-1 min-w-0">
+                        </div>
+                        <button type="button" id="check-id-btn" class="shrink-0 rounded-xl border-[1.5px] border-brand-green text-brand-green py-3 px-3.5 cursor-pointer bg-transparent">중복확인</button>
+                    </div>
+
+                    <div class="w-[380px] px-[15px] py-3 rounded-xl mt-3 border border-input-border flex items-center bg-input-bg min-w-0 focus-within:ring-2 focus-within:ring-brand-pink focus-within:border-brand-pink transition">
+                            <img
+                                src="{{ url_for('static', filename='images/star.png') }}"
+                                class="pr-2.5">
+                            <input
+                                id="signup-nickname"
+                                type="text"
+                                placeholder="닉네임"
+                                class="text-sm text-text-placeholder border-none outline-none bg-transparent flex-1 min-w-0">
+                    </div>
+
+                    <div class="w-[380px] px-[15px] py-3 rounded-xl mt-3 border border-input-border flex items-center bg-input-bg min-w-0 focus-within:ring-2 focus-within:ring-brand-pink focus-within:border-brand-pink transition">
+                            <img
+                                src="{{ url_for('static', filename='images/pwd.png') }}"
+                                class="pr-2.5">
+                            <input
+                                id="signup-pwd"
+                                type="password"
+                                placeholder="비밀번호"
+                                class="text-sm text-text-placeholder border-none outline-none bg-transparent flex-1 min-w-0">
+                    </div>
+
+                    <div class="w-[380px] px-[15px] py-3 rounded-xl mt-3 border border-input-border flex items-center bg-input-bg min-w-0 focus-within:ring-2 focus-within:ring-brand-pink focus-within:border-brand-pink transition">
+                            <img
+                                src="{{ url_for('static', filename='images/pwd.png') }}"
+                                class="pr-2.5">
+                            <input
+                                id="signup-pwd-confirm"
+                                type="password"
+                                placeholder="비밀번호 확인"
+                                class="text-sm text-text-placeholder border-none outline-none bg-transparent flex-1 min-w-0">
+                    </div>
+
+                    <label class="mt-[19.5px] block text-[13px] text-text-muted font-gowun">
+                        <input type="checkbox" class="w-4 h-4 rounded-sm bg-[#E68485]">
+                        <span>이용약관 및 개인정보처리방침에 동의합니다</span>
+                    </label>
+
+                    <button type="button" id="signup-submit" class="w-[380px] h-12 rounded-xl mt-5 bg-brand-pink  font-jua py-4 border-none shadow-none text-white text-base justify-center items-center">가입하기</button>
+
+                    <p class="text-center text-[13px] mt-[20px] text-text-muted font-gowun">이미 계정이 있으신가요?<a href="#" class="font-bold text-brand-pink-dark font-gowun">로그인</a></p>
+                </div>
+            </div>
         </div>
+        <script>
+            const signupIdInput = document.getElementById('signup-id');
+            let idChecked = false;
+            let idCheckedValue = '';
+
+            signupIdInput.addEventListener('input', function () {
+                idChecked = false;
+            });
+
+            document.getElementById('check-id-btn').addEventListener('click', function () {
+                const loginId = signupIdInput.value.trim();
+                if (!loginId) {
+                    alert('아이디를 입력해주세요');
+                    return;
+                }
+
+                fetch('/check_id?login_id=' + encodeURIComponent(loginId))
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        alert(data.message);
+                        idChecked = !!data.available;
+                        idCheckedValue = loginId;
+                    })
+                    .catch(function () {
+                        alert('서버와 통신 중 오류가 발생했습니다');
+                    });
+            });
+
+            document.getElementById('signup-submit').addEventListener('click', function () {
+                const loginId = signupIdInput.value.trim();
+                const username = document.getElementById('signup-nickname').value.trim();
+                const userPwd = document.getElementById('signup-pwd').value;
+                const userPwdConfirm = document.getElementById('signup-pwd-confirm').value;
+
+                if (!loginId || !username || !userPwd || !userPwdConfirm) {
+                    alert('모든 항목을 입력해주세요');
+                    return;
+                }
+                if (!idChecked || idCheckedValue !== loginId) {
+                    alert('아이디 중복확인을 해주세요');
+                    return;
+                }
+                if (userPwd !== userPwdConfirm) {
+                    alert('비밀번호가 일치하지 않습니다');
+                    return;
+                }
+
+                fetch('/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ login_id: loginId, username: username, user_pwd: userPwd })
+                })
+                    .then(function (res) {
+                        return res.json().then(function (data) {
+                            return { ok: res.ok, data: data };
+                        });
+                    })
+                    .then(function (result) {
+                        if (result.ok) {
+                            alert('회원가입이 완료되었습니다');
+                            window.location.href = '/';
+                        } else {
+                            alert(result.data.message || '회원가입에 실패했습니다');
+                        }
+                    })
+                    .catch(function () {
+                        alert('서버와 통신 중 오류가 발생했습니다');
+                    });
+            });
+        </script>
     </body>
 </html>

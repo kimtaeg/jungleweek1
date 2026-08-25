@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <!-- 
+    jusify-: 좌우 위치 제어
+    items-: 위아래 높낮이 맞춤
+
+    flex/flex-row: 가로 배치
+        flex 선언하면 디폴트값이 가로 배치
+
+        justify-: 좌우 위치 제어
+        items-: 위아래 높낮이 맞춤
+
+    flex-col: 세로 배치
+        justify-: 위아래 위치 제어
+        items-: 좌우 정렬 맞춤
+
+    w: 너비
+    h: 높이
+
+    p: 안쪽 여백
+
+    min-h: 최소 높이 설정
+    -->
+    <!-- 
+    1. html먼저 구현
+    2. 여백, 패딩 구현
+    3. 색깔 조정
+    4. 이미지, 폰트
+     -->
+
+    <!-- 메인 프레임 -->
+    <div class="w-full flex justify-center">
+        <!-- 왼쪽 화면 프레임 -->
+        <div class="w-1/3 min-h-[900px] flex-col justify-center items-center bg-[url('/static/images/left_brand_panel.svg')]"></div>
+
+        <!-- 오른쪽 화면 프레임 (배경색 및 내부 중앙 정렬) -->
+        <div class="w-2/3 min-h-[900px] flex flex-col justify-center items-center bg-[#FEFBF8] p-8">
+
+            <!-- 로그인 폼 컨테이너 (최대 너비 max-w-sm을 줘서 크기 제한) -->
+            <div class="w-full max-w-sm flex flex-col">
+
+                <!-- 1. 제목 영역 -->
+                <div class="mb-8">
+                    <h2 class="text-2xl text-stone-800 font-noraml font-['Jua'] mb-1">로그인</h2>
+                    <p class="text-sm text-[#7D726A] font-noraml font-['Gowun_Dodum']">몽글로그에 오신 걸 환영해요</p>
+                </div>
+
+                <!-- 2. 입력 폼 영역 (space-y-4로 항목 간격 자동 분배) -->
+                <form id="login-form" class="w-full space-y-4 font-['Gowun_Dodum']">
+                    
+                    <!-- 아이디 입력단 -->
+                    <div>
+                        <label for="id" class="block text-xs text-[#7D726A] font-normal mb-1.5">아이디</label>
+                        <div class="relative flex items-center">
+                            <!-- 인풋 내부 아이콘 -->
+                            <span class="absolute left-3.5 text-stone-400 text-sm">
+                                <img src="/static/images/id_input.svg" alt="아이디 아이콘">
+                            </span>
+                            <input 
+                                id="id" 
+                                type="text" 
+                                placeholder="아이디를 입력하세요" 
+                                class="w-full h-11 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-xl text-sm placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-rose-300"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- 비밀번호 입력단 -->
+                    <div>
+                        <label for="password" class="block text-xs text-[#7D726A] font-normal mb-1.5">비밀번호</label>
+                        <div class="relative flex items-center">
+                            <!-- 인풋 내부 아이콘 -->
+                             
+                            <span class="absolute left-3.5 text-stone-400 text-sm">
+                                <img src="/static/images/pwd_input.svg" alt="비밀번호 아이콘">
+                            </span>
+                            <input 
+                                id="password" 
+                                type="password" 
+                                placeholder="비밀번호를 입력하세요" 
+                                class="w-full h-11 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-xl text-sm placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-rose-300"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- 로그인 버튼 (margin-top을 주어 인풋과 분리) -->
+                    <button 
+                        type="submit" 
+                        class="w-full h-11 bg-[#E68485] hover:bg-rose-500 text-white text-base font-['Jua'] rounded-xl transition duration-200 !mt-6"
+                    >
+                        로그인
+                    </button>
+                </form>
+
+                <!-- 3. 하단 링크 -->
+                <div class="mt-8 text-center text-xs font-['Gowun_Dodum'] text-stone-500">
+                    아직 계정이 없으신가요? 
+                    <a href="/signup" class="text-rose-500 hover:underline font-semibold ml-1">회원가입</a>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const loginId = document.getElementById('id').value.trim();
+            const userPwd = document.getElementById('password').value;
+
+            if (!loginId || !userPwd) {
+                alert('아이디와 비밀번호를 입력해주세요');
+                return;
+            }
+
+            fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ login_id: loginId, user_pwd: userPwd })
+            })
+                .then(function (res) {
+                    return res.json().then(function (data) {
+                        return { ok: res.ok, data: data };
+                    });
+                })
+                .then(function (result) {
+                    if (result.ok) {
+                        window.location.href = '/post_detail';
+                    } else {
+                        alert(result.data.message || '로그인에 실패했습니다');
+                    }
+                })
+                .catch(function () {
+                    alert('서버와 통신 중 오류가 발생했습니다');
+                });
+        });
+    </script>
+</body>
+</html>
+
+
