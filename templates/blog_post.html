@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <title>몽글몽글 블로그</title>
+        <style type="text/tailwindcss">
+            @theme {
+                --color-card: #ffffff;
+                --color-muted: #78716c;
+                --color-brandDark: #f43f5e;
+            }
+        </style>
+    </head>
+
+    <body class="min-h-screen bg-[#FBF3EA] flex items-start justify-center p-8">
+    <div class="w-full max-w-[1440px] flex items-start gap-6">
+    <div class="flex w-[1440px] h-[1144.84px] shrink-0 px-[40px] py-[32px] justify-center items-start gap-[24px]">
+
+    <aside class="w-[280px] shrink-0 flex flex-col gap-5">
+
+        <div class="bg-card rounded-2xl shadow-sm overflow-hidden">
+
+        <div class="relative h-16 bg-gradient-to-r from-rose-200 to-orange-100">
+        </div>
+
+        <div class="relative -mt-8 flex flex-col items-center pb-4">
+
+            <div class="flex w-[80px] h-[80px] p-[25px] justify-center items-center rounded-[40px] border-[4px] border-[#FEFBF8] bg-[#E68485] shadow-[0_6px_14px_0_rgba(54,44,36,0.12)] overflow-hidden">
+                <img
+                   src="{{ url_for('static', filename='images/profile.svg') }}"
+                     alt="프로필 아이콘"
+                    class="w-full h-full object-contain"
+                >
+            </div>
+
+
+            <div class="pt-2 pb-5 px-5 text-center">
+
+                <h2 id="profile-name" class="text-base font-bold text-center">
+                    몽글몽글
+                </h2>
+
+                <p class="flex h-[31px] mt-[10px] px-[14px] py-[6px] justify-center items-center rounded-full bg-[#FBF0E6] text-[13px] text-[#7D726A] text-center font-['Gowun_Dodum'] text-[13px] font-normal leading-normal">
+                    오늘도 몽글몽글하게:)
+                </p>
+
+             <div class="flex w-[238px] h-[55px] mt-[18px] justify-center border-t border-[#E8E0D8]">
+
+                <div class="flex-1 text-center mt-[17px] px-2 border-r border-stone-200">
+                   <p class="text-xl font-semibold">
+                        {{ stats.posts }}
+                    </p>
+                    <span class="text-xs text-stone-500">
+                        게시글
+                    </span>
+                </div>
+
+                <div class="flex-1 text-center mt-[17px] px-2 border-r border-stone-200">
+                    <p class="text-xl font-semibold">
+                        {{ stats.neighbors }}
+                    </p>
+                    <span class="text-xs text-stone-500">
+                        이웃
+                    </span>
+                </div>
+
+                <div class="flex-1 text-center mt-[17px] px-2">
+                    <p class="text-xl font-semibold">
+                        {{ stats.visitors }}
+                    </p>
+                    <span class="text-xs text-stone-500">
+                        방문
+                    </span>
+                </div>
+
+</div>
+
+
+            </div>
+        </div>
+
+        <div class="p-4">
+    <form action="{{ url_for('add_neighbor') }}" method="post">
+        <button
+            type="submit"
+            {% if is_neighbor %}disabled{% endif %}
+            class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition
+                   {% if is_neighbor %}
+                       bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed
+                   {% else %}
+                       bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]
+                   {% endif %}"
+        >
+            {% if is_neighbor %}
+                이웃추가 완료
+            {% else %}
+                + 이웃추가
+            {% endif %}
+        </button>
+    </form>
+</div>
+
+        </div>
+
+
+         <div class="rounded-[20px] border border-[#E8E0D8] bg-[#FEFBF8]">
+            <nav class="px-3 pb-3 space-y-1 mt-[11px]">
+                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-50 text-brandDark font-medium text-sm">
+                    <img
+                        src="{{ url_for('static', filename='images/blog.svg') }}"
+                        alt="블로그 아이콘"
+                        class="w-4 h-4 object-contain"
+                    >
+                    블로그
+                </a>
+
+                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl text-stone-500 hover:bg-stone-50 text-sm">
+                    <img
+                        src="{{ url_for('static', filename='images/guestbook.svg') }}"
+                        alt="방명록 아이콘"
+                        class="w-4 h-4 object-contain"
+                    >
+                    방명록
+                </a>
+            </nav>
+        </div>
+
+        <div class="bg-card rounded-2xl shadow-sm p-4">
+
+    <p class="text-[11px] tracking-wide text-muted font-semibold mb-2">
+        BACKGROUND MUSIC
+    </p>
+
+    <div class="flex items-center gap-3">
+
+        <div class="min-w-0 flex-1">
+
+            <p
+                id="music-title"
+                class="text-sm font-medium truncate"
+            >
+            </p>
+
+            <p
+                id="music-artist"
+                class="text-xs text-muted truncate"
+            >
+            </p>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+     </aside>
+
+
+<main class="flex-1 min-w-0">
+
+    <div class="flex items-center justify-between mb-4">
+
+        <h2 class="text-xl font-bold">
+            블로그
+        </h2>
+
+        <div class="flex items-center gap-2">
+
+            <form method="get">
+                <select
+                    id="sort-select"
+                    name="sort"
+                    onchange="this.form.submit()"
+                    class="text-sm text-stone-500 bg-transparent border-0 focus:ring-0 cursor-pointer"
+                >
+                    <option value="latest"
+                        {% if request.args.get('sort', 'latest') == 'latest' %}
+                            selected
+                        {% endif %}
+                    >
+                        최신순
+                    </option>
+
+                    <option value="oldest"
+                        {% if request.args.get('sort') == 'oldest' %}
+                            selected
+                        {% endif %}
+                    >
+                        오래된 순
+                    </option>
+                </select>
+            </form>
+
+            <a
+                href="{{ url_for('create_post') }}"
+                class="flex items-center gap-1 text-sm font-medium text-white bg-brandDark rounded-full px-4 py-2 hover:opacity-90 transition"
+            >
+                <svg
+                    class="w-3.5 h-3.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4v16m8-8H4"
+                    />
+                </svg>
+
+                새 글 추가
+            </a>
+
+        </div>
+    </div>
+
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {% for post in posts[:8] %}
+
+        <a
+            href="{{ url_for('post_detail', post_id=post.id) }}"
+            class="block bg-card rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition group"
+        >
+
+            <div class="relative h-28 bg-gradient-to-br from-rose-400 to-red-500 flex items-center justify-center overflow-hidden">
+
+                {% if post.image_path %}
+
+                    <img
+                        src="{{ url_for('static', filename=post.image_path) }}"
+                        alt="{{ post.title }} 이미지"
+                        class="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    >
+
+                {% else %}
+
+                    <svg
+                        class="w-8 h-8 text-white/90"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                        />
+
+                        <circle
+                            cx="12"
+                            cy="13"
+                            r="3.5"
+                        />
+                    </svg>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="p-4">
+
+                <h3
+                    class="font-semibold text-sm mb-1 truncate group-hover:text-brandDark transition"
+                >
+                    {{ post.title }}
+                </h3>
+
+
+                <p
+                    class="text-xs text-muted leading-relaxed line-clamp-2"
+                >
+                    {{ post.content }}
+                </p>
+
+
+                <div class="flex items-center justify-between mt-3">
+
+                    <span class="text-[11px] text-muted">
+                        {{ post.created_at.strftime('%m.%d') if post.created_at else '' }}
+                    </span>
+
+
+                    <div class="flex items-center gap-3 text-[11px] text-muted">
+
+                        <span class="flex items-center gap-1">
+                            <img
+                            src="{{ url_for('static', filename='images/like.png') }}"
+                             alt="좋아요 아이콘"
+                            class="w-4 h-4 object-contain"
+                            >
+                            {{ post.likes_count }}
+                        </span>
+
+                        <span class="flex items-center gap-1">
+                            <img
+                            src="{{ url_for('static', filename='images/comment.png') }}"
+                             alt="댓글 아이콘"
+                            class="w-4 h-4 object-contain"
+                            >
+                            {{ post.comments_count }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </a>
+
+
+        {% else %}
+
+        <div class="col-span-full bg-card rounded-2xl border border-stone-200 p-10 text-center">
+
+            <h2 class="font-semibold text-sm mb-2">
+                아직 작성된 게시글이 없습니다.
+            </h2>
+
+            <p class="text-xs text-muted">
+                새로운 게시글이 작성되면 이곳에 표시됩니다.
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</main>
+
+    <aside class="w-[180px] shrink-0">
+        <div class="bg-card rounded-2xl shadow-sm p-4">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-bold">방문록</h3>
+                <a href="#" class="text-[11px] text-muted hover:text-brandDark">자세히</a>
+            </div>
+            <ul class="space-y-3">
+                <li class="flex gap-2">
+                    <span class="w-6 h-6 rounded-full bg-rose-300 shrink-0"></span>
+                    <div class="min-w-0">
+                        <p class="text-xs font-medium truncate">커피친구 <span class="text-[10px] text-muted font-normal">· 3분 전</span></p>
+                        <p class="text-[11px] text-muted line-clamp-2">오늘 글 보고 갔다가요 :) 항상 응원해요!</p>
+                    </div>
+                </li>
+                <li class="flex gap-2">
+                    <span class="w-6 h-6 rounded-full bg-orange-300 shrink-0"></span>
+                    <div class="min-w-0">
+                        <p class="text-xs font-medium truncate">알수없음 <span class="text-[10px] text-muted font-normal">· 20분 전</span></p>
+                        <p class="text-[11px] text-muted line-clamp-2">사진이랑 글 보러 자주 놀러 올게요!</p>
+                    </div>
+                </li>
+                <li class="flex gap-2">
+                    <span class="w-6 h-6 rounded-full bg-amber-300 shrink-0"></span>
+                    <div class="min-w-0">
+                        <p class="text-xs font-medium truncate">문근영님 <span class="text-[10px] text-muted font-normal">· 1시간 전</span></p>
+                        <p class="text-[11px] text-muted line-clamp-2">방금 온 신입 방문자예요 잘 부탁드려요.</p>
+                    </div>
+                </li>
+            </ul>
+            <div class="mt-4 flex items-center gap-1">
+                <input type="text" placeholder="메시지를 남겨보세요"
+                       class="flex-1 min-w-0 text-xs rounded-full border border-stone-200 px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-rose-200">
+                <button type="button"
+                        class="shrink-0 text-xs font-medium text-white bg-brandDark rounded-full px-3 py-1.5">
+                    등록
+                </button>
+            </div>
+        </div>
+    </aside>
+    </div>
+    </div>
+
+    <script>
+            const editButton = document.getElementById('profile-edit-button');
+            const editForm = document.getElementById('profile-edit-form');
+            const profileImage = document.getElementById('profile-img');
+            const imageInput = document.getElementById('edit-profile-img');
+
+            editButton.addEventListener('click', () => {
+                editForm.hidden = !editForm.hidden;
+                editButton.setAttribute('aria-expanded', String(!editForm.hidden));
+                if (!editForm.hidden) document.getElementById('edit-name').focus();
+            });
+
+            imageInput.addEventListener('change', () => {
+                const image = imageInput.files[0];
+                if (!image) return;
+                const reader = new FileReader();
+                reader.addEventListener('load', () => { profileImage.src = reader.result; });
+                reader.readAsDataURL(image);
+            });
+            editForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const name = document.getElementById('edit-name').value.trim();
+                const description = document.getElementById('edit-desc').value.trim();
+                if (name) document.getElementById('profile-name').textContent = name;
+                if (description) document.getElementById('profile-desc').textContent = description;
+                editForm.hidden = true;
+                editButton.setAttribute('aria-expanded', 'false');
+            });
+            const postSection = document.querySelector('[aria-label="게시글 목록"]');
+            const sortSelect = document.getElementById('sort-select');
+
+            function sortPosts(order) {
+                const posts = Array.from(postSection.querySelectorAll('.post-card'));
+                posts.sort((first, second) => {
+                    const firstDate = new Date(first.querySelector('time').dateTime);
+                    const secondDate = new Date(second.querySelector('time').dateTime);
+                    return order === 'latest' ? secondDate - firstDate : firstDate - secondDate;
+                });
+                posts.forEach((post) => postSection.appendChild(post));
+            }
+
+            sortSelect.addEventListener('change', () => sortPosts(sortSelect.value));
+            sortPosts('latest');
+            const musicFile = document.getElementById('music-file');
+            const musicPlayer = document.getElementById('music-player');
+            const musicTitle = document.getElementById('music-title');
+            const musicArtist = document.getElementById('music-artist');
+
+            musicFile.addEventListener('change', function () {
+
+            const file = this.files[0];
+
+            if (!file) {
+                return;
+                }
+
+            const musicURL = URL.createObjectURL(file);
+            musicPlayer.src = musicURL;
+
+            let fileName = file.name.replace(/\.[^/.]+$/, '');
+
+            const parts = fileName.split(' - ');
+
+            if (parts.length >= 2) {
+
+                musicTitle.textContent = parts[0].trim();
+                musicArtist.textContent = parts.slice(1).join(' - ').trim();
+
+            } else {
+
+                musicTitle.textContent = fileName;
+                musicArtist.textContent = '알 수 없는 아티스트';
+
+            }
+
+                musicPlayer.play().catch(() => {
+                });
+
+            });
+
+        </script>
+    </body>
+</html>
