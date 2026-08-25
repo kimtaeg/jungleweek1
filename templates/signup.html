@@ -4,31 +4,115 @@
         <meta charset="utf-8"/>
     </head>
     <body>
-        <h1 style="font-size:26px; font-style:normal; font-family: jua;">회원가입</h1>
-        <p style="font-size:14px; font-style: normal; color:#7D726A">몇 가지만 알려주시면 바로 시작할 수 있어요</p>
-        
-        <div style="display:flex; gap:8px; align-items:center;">
-            <div style="width: 293.5px; padding: 12px 15px;
-            border-radius: 12px;
-            border: 1px solid #E8E0D8;
-            display:flex; align-items:center;
-            background: #FBF8F5; min-width:0;">
-                <img
-                    src="{{ url_for('static', filename='images/SVG.png') }}"
-                    style="width:17px; height:17px; padding-right:10px;">
-                <input
-                    type="text"
-                    placeholder="아이디"
-                    style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+        <div style="display: flex; width: 100vw; height: 100vh;">
+            <!-- 왼쪽 -->
+            <div style="width:40%; height: 100%;">
+                <img 
+                    src="{{ url_for('static', filename='images/Left_brand_panel.png') }}"
+                    style="width:100%; height:100%; object-fit:cover; display:block;">
             </div>
-            <button style="
-                flex-shrink:0;
-                border-radius:12px;
-                border:1.5px solid #338D6B;
-                color:#338D6B;
-                padding:12px 14px;
-                cursor:pointer;
-                background:transparent;">중복확인</button>
+            <!-- 오른쪽 -->
+            <div style="width:60%; height:100%; align-items: center; justify-content: center; display:flex; background-color: #FEFBF8;">
+                <div style="width:380px; display:flex; flex-direction:column;">
+                    <h1 style="font-size:26px; font-style:normal; font-family: jua;">회원가입</h1>
+                    <p style="font-size:14px; font-style: normal; color:#7D726A">몇 가지만 알려주시면 바로 시작할 수 있어요</p>
+                    
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <div style="width: 293.5px; padding: 12px 15px;
+                        border-radius: 12px;
+                        border: 1px solid #E8E0D8;
+                        display:flex; align-items:center;
+                        background: #FBF8F5; min-width:0;">
+                            <img
+                                src="{{ url_for('static', filename='images/SVG.png') }}"
+                                style="width:17px; height:17px; padding-right:10px;">
+                            <input
+                                type="text"
+                                placeholder="아이디"
+                                style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+                        </div>
+                        <button style="
+                            flex-shrink:0;
+                            border-radius:12px;
+                            border:1.5px solid #338D6B;
+                            color:#338D6B;
+                            padding:12px 14px;
+                            cursor:pointer;
+                            width: 78.5px;
+                            background:transparent;">중복확인</button>
+                    </div>
+
+                    <div style="width: 380px; padding: 12px 15px;
+                        border-radius: 12px;
+                        margin-top: 12px;
+                        border: 1px solid #E8E0D8;
+                        display:flex; align-items:center;
+                        background: #FBF8F5; min-width:0;">
+                            <img
+                                src="{{ url_for('static', filename='images/star.png') }}"
+                                style="width:17px; height:17px; padding-right:10px;">
+                            <input
+                                type="text"
+                                placeholder="닉네임"
+                                style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+                    </div>
+
+                    <div style="width: 380px; padding: 12px 15px;
+                        border-radius: 12px;
+                        margin-top: 12px;
+                        border: 1px solid #E8E0D8;
+                        display:flex; align-items:center;
+                        background: #FBF8F5; min-width:0;">
+                            <img
+                                src="{{ url_for('static', filename='images/pwd.png') }}"
+                                style="width:17px; height:17px; padding-right:10px;">
+                            <input
+                                type="text"
+                                placeholder="비밀번호"
+                                style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+                    </div>
+
+                    <div style="width: 380px; padding: 12px 15px;
+                        border-radius: 12px;
+                        margin-top: 12px;
+                        border: 1px solid #E8E0D8;
+                        display:flex; align-items:center;
+                        background: #FBF8F5; min-width:0;">
+                            <img
+                                src="{{ url_for('static', filename='images/pwd.png') }}"
+                                style="width:17px; height:17px; padding-right:10px;">
+                            <input
+                                type="text"
+                                placeholder="비밀번호 확인"
+                                style="font-size:14px; color:#A49D97; border:none; outline:none; background:transparent; flex:1; min-width:0;">
+                    </div>
+
+                    <label style="margin-top: 19.5px; 
+                        display: block;
+                        font-size: 13px;
+                        color: #7D726A;;
+                        ">
+                        <input type="checkbox" style="width: 16px; height: 16px; border-radius: 2.5px; background: #E68485;">
+                        <span>이용약관 및 개인정보처리방침에 동의합니다</span>
+                    </label>
+
+                    <!--Input은 패딩값이랑 border값이 있어 380이고 버튼은 없으니 412로 해야 크기가 맞다-->
+                    <button style="width: 412px; height: 48px;
+                        border-radius: 12px;
+                        margin-top: 20px;
+                        background: #E68485;
+                        display: flex;
+                        padding: 16px 0;
+                        border: none;
+                        box-shadow: none;
+                        color: white;
+                        font-size:16px;
+                        justify-content: center;
+                        align-items: center;">가입하기</button>
+
+                    <p style="text-align:center; font-size: 13px; color: #7D726A;">이미 계정이 있으신가요?<a href="#" style="font-weight: bold; color: #BB565A;">로그인</a></p>
+                </div>
+            </div>
         </div>
     </body>
 </html>
