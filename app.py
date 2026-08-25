@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -75,5 +75,18 @@ def signup():
 @app.route('/post_detail')
 def postDetail():
     return render_template('post_detail.html')
+
+@app.route('/blog_post')
+def blogPost():
+    stats = {"posts": 0, "neighbors": 0, "visitors": 0}
+    return render_template('blog_post.html', stats=stats, posts=[], is_neighbor=False)
+
+@app.route('/add_neighbor', methods=['POST'])
+def add_neighbor():
+    return redirect(url_for('blogPost'))
+
+@app.route('/create_post')
+def create_post():
+    return redirect(url_for('blogPost'))
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
