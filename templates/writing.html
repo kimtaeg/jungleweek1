@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html long="ko">
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            'bg-color':'#FBF0E6',
+                            'top-text':'#7D726A',
+                            'border-color' : '#E8E0D8',
+                            'bg-button' : '#FEFBF8',
+                            'delete-bt': '#C65954',
+                            'main-text': '#362C24',
+                            'like-color':'#E68485'
+                        },
+                        fontFamily: {
+                            jua: ['jua'],
+                            gowun: ['Gowun Dodum'],
+                        },
+                    },
+                },
+            }
+        </script>
+    </head>
+    <body>
+        <div class="flex w-screen h-screen bg-bg-color justify-center items-center">
+            <div class="w-[760px] flex flex-col">
+                <!--상단바-->
+                <div class="flex items-center justify-between mb-[24px] text-[14px] text-top-text not-italic w-full">
+                    <a href="{{ url_for('blogPost') }}" class="flex items-center">
+                        <img
+                        src="{{ url_for('static', filename='images/Vector.png') }}"
+                        class="pr-[6px]">
+                        취소
+                    </a>
+                   <div class="flex items-center gap-[8px]">
+                        <button
+                           type="submit"
+                           form="post-form"
+                           class="flex w-[67.16px] h-[38px] pt-3 pr-[21.662px] pb-3 pl-[22px] justify-center items-center rounded-[10px] bg-[#E68485] text-white text-center font-['Jua'] text-[14px] font-normal leading-normal"
+                        >
+                              저장
+                          </button>
+                    </div>
+                </div>
+                <!--글 작성 폼-->
+                <form id="post-form" method="post" enctype="multipart/form-data" action="{{ url_for('create_post') }}">
+                    <!--제목-->
+                    
+                    <div class="<h2 class="text-[#A49D97] font-['Jua'] text-[23px] font-normal leading-normal mt-[50px]">
+                        <input
+                            type="text"
+                            name="title"
+                            required
+                            placeholder="제목을 입력하세요"
+                            class="font-jua text-[28px] bg-transparent outline-none w-full text-main-text placeholder:text-top-text"
+                        >
+                    </div>
+                    <hr>
+
+                    <!--대표사진-->
+                    <label
+                        for="post-image"
+                        class="flex flex-col w-[760px] h-[430px] rounded-[20px] mt-[27px] bg-bg-button items-center justify-center gap-[8px] cursor-pointer overflow-hidden"
+                    >
+                        <img id="image-preview" class="hidden w-full h-full object-cover">
+                        <div id="image-placeholder" class="flex flex-col items-center gap-[8px] text-top-text">
+                            <svg
+                                class="w-8 h-8"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                />
+                                <circle cx="12" cy="13" r="3.5" />
+                            </svg>
+                            <span class="text-[14px]">대표 이미지 추가</span>
+                        </div>
+                    </label>
+                    <input type="file" id="post-image" name="image" accept="image/*" class="hidden">
+                    <!--글-->
+                    <textarea
+                        name="content"
+                        required
+                        placeholder="오늘의 이야기를 적어보세요..."
+                        rows="12"
+                        class="w-[760px] mt-[31px] text-main-text text-[15px] font-gowun bg-transparent outline-none resize-none placeholder:text-top-text"
+                    ></textarea>
+                </form>
+
+            </div>
+        </div>
+        <script>
+            const imageInput = document.getElementById('post-image');
+            const imagePreview = document.getElementById('image-preview');
+            const imagePlaceholder = document.getElementById('image-placeholder');
+
+            imageInput.addEventListener('change', () => {
+                const file = imageInput.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.addEventListener('load', () => {
+                    imagePreview.src = reader.result;
+                    imagePreview.classList.remove('hidden');
+                    imagePlaceholder.classList.add('hidden');
+                });
+                reader.readAsDataURL(file);
+            });
+        </script>
+    </body>
+</html>
