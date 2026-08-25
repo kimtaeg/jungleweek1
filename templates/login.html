@@ -55,7 +55,7 @@
                 </div>
 
                 <!-- 2. 입력 폼 영역 (space-y-4로 항목 간격 자동 분배) -->
-                <form action="" class="w-full space-y-4 font-['Gowun_Dodum']">
+                <form id="login-form" class="w-full space-y-4 font-['Gowun_Dodum']">
                     
                     <!-- 아이디 입력단 -->
                     <div>
@@ -104,12 +104,47 @@
                 <!-- 3. 하단 링크 -->
                 <div class="mt-8 text-center text-xs font-['Gowun_Dodum'] text-stone-500">
                     아직 계정이 없으신가요? 
-                    <a href="#" class="text-[#E68485] hover:underline font-semibold ml-1">회원가입</a>
+                    <a href="/signup" class="text-rose-500 hover:underline font-semibold ml-1">회원가입</a>
+
                 </div>
 
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const loginId = document.getElementById('id').value.trim();
+            const userPwd = document.getElementById('password').value;
+
+            if (!loginId || !userPwd) {
+                alert('아이디와 비밀번호를 입력해주세요');
+                return;
+            }
+
+            fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ login_id: loginId, user_pwd: userPwd })
+            })
+                .then(function (res) {
+                    return res.json().then(function (data) {
+                        return { ok: res.ok, data: data };
+                    });
+                })
+                .then(function (result) {
+                    if (result.ok) {
+                        window.location.href = '/post_detail';
+                    } else {
+                        alert(result.data.message || '로그인에 실패했습니다');
+                    }
+                })
+                .catch(function () {
+                    alert('서버와 통신 중 오류가 발생했습니다');
+                });
+        });
+    </script>
 </body>
 </html>
 
