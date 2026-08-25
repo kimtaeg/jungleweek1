@@ -2,6 +2,9 @@
 <html lang="ko">
     <head>
         <meta charset="utf-8"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {
@@ -19,6 +22,7 @@
                         },
                         fontFamily: {
                             jua: ['jua'],
+                            gowun: ['Gowun Dodum'],
                         },
                     },
                 },
@@ -37,7 +41,7 @@
             <div class="w-3/5 h-full flex items-center justify-center bg-brand-bg">
                 <div class="w-[380px] flex flex-col">
                     <h1 class="text-[26px] not-italic font-jua">회원가입</h1>
-                    <p class="text-sm mt-[10px] not-italic text-text-muted font-style: normal">몇 가지만 알려주시면 바로 시작할 수 있어요</p>
+                    <p class="text-sm mt-[10px] not-italic text-text-muted font-style: normal font-gowun">몇 가지만 알려주시면 바로 시작할 수 있어요</p>
 
                     <div class="flex gap-2 items-center  mt-[26px]">
                         <div class="w-[293.5px] px-[15px] py-3 rounded-xl border border-input-border flex items-center bg-input-bg min-w-0">
@@ -82,15 +86,14 @@
                                 class="text-sm text-text-placeholder border-none outline-none bg-transparent flex-1 min-w-0">
                     </div>
 
-                    <label class="mt-[19.5px] block text-[13px] text-text-muted">
+                    <label class="mt-[19.5px] block text-[13px] text-text-muted font-gowun">
                         <input type="checkbox" class="w-4 h-4 rounded-sm bg-[#E68485]">
                         <span>이용약관 및 개인정보처리방침에 동의합니다</span>
                     </label>
 
-                    <!--Input은 패딩값이랑 border값이 있어 380이고 버튼은 없으니 412로 해야 크기가 맞다-->
-                    <button class="w-[412px] h-12 rounded-xl mt-5 bg-brand-pink flex py-4 border-none shadow-none text-white text-base justify-center items-center">가입하기</button>
+                    <button class="w-[380px] h-12 rounded-xl mt-5 bg-brand-pink  font-jua py-4 border-none shadow-none text-white text-base justify-center items-center">가입하기</button>
 
-                    <p class="text-center text-[13px] mt-[20px] text-text-muted">이미 계정이 있으신가요?<a href="#" class="font-bold text-brand-pink-dark">로그인</a></p>
+                    <p class="text-center text-[13px] mt-[20px] text-text-muted font-gowun">이미 계정이 있으신가요?<a href="#" class="font-bold text-brand-pink-dark font-gowun">로그인</a></p>
                 </div>
             </div>
         </div>
