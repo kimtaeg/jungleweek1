@@ -5,12 +5,10 @@ from bson import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone
 import os
-import re
 app = Flask(__name__)
 
 DEFAULT_PROFILE_COLOR = "#E68485"
 DEFAULT_PROFILE_DESC = "오늘도 몽글몽글하게:)"
-COLOR_RE = re.compile(r'^#[0-9A-Fa-f]{6}$')
 
 load_dotenv()
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
@@ -95,6 +93,7 @@ def blogPost():
     username = user['username'] if user else '몽글몽글'
     profile_color = (user or {}).get('profile_color', DEFAULT_PROFILE_COLOR)
     profile_desc = (user or {}).get('profile_desc', DEFAULT_PROFILE_DESC)
+    view = request.args.get('view', 'blog')
 
     return render_template(
         'blog_post.html',
@@ -103,7 +102,8 @@ def blogPost():
         is_neighbor=False,
         username=username,
         profile_color=profile_color,
-        profile_desc=profile_desc
+        profile_desc=profile_desc,
+        view=view
     )
 
 @app.route('/profile/update', methods=['POST'])
@@ -116,9 +116,6 @@ def update_profile():
     username = (data.get('username') or '').strip()
     description = (data.get('description') or '').strip()
     color = (data.get('color') or '').strip()
-
-    if not username or not description or not COLOR_RE.match(color):
-        return jsonify({"message": "입력값을 확인해주세요"}), 400
 
     db.user.update_one(
         {"_id": ObjectId(user_id)},
