@@ -4,8 +4,8 @@
     "login_id": "dfss",
     "user_pwd": "암호화된 pwd",
     "username": "둘리",
-    "user_img": "s3 url",
-    "user_description": "안녕하세요",
+    "profile_color": "#E68485",
+    "profile_desc": "안녕하세요",
     "created_at": "ISODate"
   },
   "blog": {
