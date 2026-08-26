@@ -109,7 +109,8 @@ def blogPost():
         is_neighbor=False,
         username=username,
         profile_color=profile_color,
-        profile_desc=profile_desc
+        profile_desc=profile_desc,
+        active_page='blog'
     )
 
 
@@ -152,6 +153,28 @@ def writing():
 @app.route('/add_neighbor', methods=['POST'])
 def add_neighbor():
     return redirect(url_for('blogPost'))
+
+@app.route('/guestbook')
+def guestbook():
+    user = None
+    user_id = session.get('user_id')
+    if user_id:
+        user = db.user.find_one({"_id": ObjectId(user_id)})
+
+    username = user['username'] if user else '몽글몽글'
+    profile_color = (user or {}).get('profile_color', DEFAULT_PROFILE_COLOR)
+    profile_desc = (user or {}).get('profile_desc', DEFAULT_PROFILE_DESC)
+    stats = {"posts": 0, "neighbors": 0, "visitors": 0}
+
+    return render_template(
+        'guestbook.html',
+        stats=stats,
+        is_neighbor=False,
+        username=username,
+        profile_color=profile_color,
+        profile_desc=profile_desc,
+        active_page='guestbook'
+    )
 
 @app.route('/create_post', methods=['POST'])
 def create_post():
