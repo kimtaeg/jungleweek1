@@ -5,6 +5,8 @@ from bson import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone
 import api.blog as blog_api
+import api.guestbook as guestbook_api
+import api.neighbor as neighbor_api
 import os
 import re
 
@@ -142,11 +144,8 @@ def unlike_post(post_id):
 
     return jsonify({"likes": likes, "liked": False}), 200
 
-
 @app.route('/blog_post')
 def blogPost():
-    stats = {"posts": 0, "neighbors": 0, "visitors": 0}
-
     user = None
     user_id = session.get('user_id')
     if user_id:
@@ -156,21 +155,28 @@ def blogPost():
     profile_color = (user or {}).get('profile_color', DEFAULT_PROFILE_COLOR)
     profile_desc = (user or {}).get('profile_desc', DEFAULT_PROFILE_DESC)
 
+    neighbor_count = neighbor_api.count_neighbors(user_id) if user_id else 0
+    all_users = neighbor_api.get_all_users(user_id) if user_id else []
+    neighbor_list = neighbor_api.get_neighbors(user_id) if user_id else []
+    stats = {"posts": db.blog.count_documents({}), "neighbors": neighbor_count, "visitors": 0}
+
     # /api/blog.py의 get_blogs 함수 호출 (db에서 블로그 불러오기)
     posted_blogs = blog_api.get_blogs()
+    guestbook_entries = guestbook_api.get_guestbooks()[:3]
 
     return render_template(
         'blog_post.html',
         stats=stats,
         posts=posted_blogs,  # blog_post.html에 블로그 전달
+        guestbook_entries=guestbook_entries,
         is_neighbor=False,
+        all_users=all_users,
+        neighbor_list=neighbor_list,
         username=username,
         profile_color=profile_color,
-        profile_desc=profile_desc
+        profile_desc=profile_desc,
+        active_page='blog'
     )
-
-
-
 
 @app.route('/profile/update', methods=['POST'])
 def update_profile():
@@ -208,11 +214,70 @@ def writing():
 
 @app.route('/add_neighbor', methods=['POST'])
 def add_neighbor():
-    return redirect(url_for('blogPost'))
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"message": "로그인이 필요합니다"}), 401
+
+    data = request.get_json(silent=True) or {}
+    target_id = data.get('target_id')
+    if not target_id:
+        return jsonify({"message": "대상 회원이 없습니다"}), 400
+
+    neighbor_api.add_neighbor(user_id, target_id)
+    return jsonify({
+        "message": "이웃으로 추가되었습니다",
+        "neighbor_count": neighbor_api.count_neighbors(user_id)
+    }), 200
+
+@app.route('/guestbook')
+def guestbook():
+    user = None
+    user_id = session.get('user_id')
+    if user_id:
+        user = db.user.find_one({"_id": ObjectId(user_id)})
+
+    username = user['username'] if user else '몽글몽글'
+    profile_color = (user or {}).get('profile_color', DEFAULT_PROFILE_COLOR)
+    profile_desc = (user or {}).get('profile_desc', DEFAULT_PROFILE_DESC)
+
+    neighbor_count = neighbor_api.count_neighbors(user_id) if user_id else 0
+    all_users = neighbor_api.get_all_users(user_id) if user_id else []
+    neighbor_list = neighbor_api.get_neighbors(user_id) if user_id else []
+    stats = {"posts": db.blog.count_documents({}), "neighbors": neighbor_count, "visitors": 0}
+    entries = guestbook_api.get_guestbooks()
+
+    return render_template(
+        'guestbook.html',
+        stats=stats,
+        is_neighbor=False,
+        all_users=all_users,
+        neighbor_list=neighbor_list,
+        username=username,
+        profile_color=profile_color,
+        profile_desc=profile_desc,
+        active_page='guestbook',
+        entries=entries
+    )
+
+@app.route('/guestbook/create', methods=['POST'])
+def create_guestbook():
+    guestbook_api.create_guestbook()
+    return redirect(url_for('guestbook'))
 
 @app.route('/create_post', methods=['POST'])
 def create_post():
     return blog_api.create_blog()
+
+@app.route('/update_post/<post_id>', methods=['GET'])
+def update_post(post_id):
+    post = db.blog.find_one({"_id": ObjectId(post_id)})
+    return render_template('update_blog.html',post = post)
+
+@app.route('/delte_post/<post_id>', methods=['GET'])
+def delete_post(post_id):
+    db.blog.delete_one({'_id': ObjectId(post_id)})
+    return redirect(url_for('blogPost'))
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
     <head>
@@ -62,14 +63,14 @@
                         </span>
                     </div>
 
-                    <div class="flex-1 text-center mt-[17px] px-2 border-r border-stone-200">
-                        <p class="text-xl font-semibold">
+                    <button type="button" id="neighbor-list-button" class="flex-1 text-center mt-[17px] px-2 border-r border-stone-200">
+                        <p id="neighbor-count" class="text-xl font-semibold">
                             {{ stats.neighbors }}
                         </p>
                         <span class="text-xs text-stone-500">
                             이웃
                         </span>
-                    </div>
+                    </button>
 
                     <div class="flex-1 text-center mt-[17px] px-2">
                         <p class="text-xl font-semibold">
@@ -138,26 +139,63 @@
                 </form>
             </div>
         </div>
+
+        <!-- 회원 목록(이웃추가) 팝업 -->
+        <div id="neighbor-add-popup" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-[#FEFBF8] rounded-[24px] p-6 w-[320px] max-h-[70vh] flex flex-col shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-sm">회원 목록</h3>
+                    <button id="neighbor-add-close-button" type="button" class="text-stone-400 hover:text-stone-600">✕</button>
+                </div>
+                <div class="overflow-y-auto space-y-2">
+                    {% for u in all_users %}
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-stone-100">
+                        <span class="text-sm">{{ u.username }}</span>
+                        <button
+                            type="button"
+                            class="neighbor-add-user-button px-3 py-1 rounded-lg text-xs font-medium border border-[#338D6B]
+                                   {% if u.is_added %}bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed{% else %}bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]{% endif %}"
+                            data-target-id="{{ u._id }}"
+                            {% if u.is_added %}disabled{% endif %}
+                        >
+                            {% if u.is_added %}완료{% else %}+ 추가{% endif %}
+                        </button>
+                    </div>
+                    {% else %}
+                    <p class="text-xs text-stone-400 text-center py-4">추가할 회원이 없습니다</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 이웃 목록 팝업 -->
+        <div id="neighbor-list-popup" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-[#FEFBF8] rounded-[24px] p-6 w-[320px] max-h-[70vh] flex flex-col shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-sm">이웃 목록</h3>
+                    <button id="neighbor-list-close-button" type="button" class="text-stone-400 hover:text-stone-600">✕</button>
+                </div>
+                <div class="overflow-y-auto space-y-2">
+                    {% for n in neighbor_list %}
+                    <div class="px-3 py-2 rounded-xl border border-stone-100 text-sm">
+                        {{ n.username }}
+                    </div>
+                    {% else %}
+                    <p id="neighbor-list-empty" class="text-xs text-stone-400 text-center py-4">아직 추가한 이웃이 없습니다</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
         <!-- 이웃추가 버튼 -->
         <div class="p-4">
-    <form action="{{ url_for('add_neighbor') }}" method="post">
-        <button
-            type="submit"
-            {% if is_neighbor %}disabled{% endif %}
-            class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition
-                   {% if is_neighbor %}
-                       bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed
-                   {% else %}
-                       bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]
-                   {% endif %}"
-        >
-            {% if is_neighbor %}
-                이웃추가 완료
-            {% else %}
-                + 이웃추가
-            {% endif %}
-        </button>
-    </form>
+    <button
+        type="button"
+        id="neighbor-add-open-button"
+        class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]"
+    >
+        + 이웃추가
+    </button>
 </div>
 
         </div>
@@ -165,21 +203,21 @@
         <!-- 카테고리창 -->
          <div class="rounded-[20px] border border-[#E8E0D8] bg-[#FEFBF8]">
             <nav class="px-3 pb-3 space-y-1 mt-[11px]">
-                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-50 text-brandDark font-medium text-sm">
-                    <img
-                        src="{{ url_for('static', filename='images/blog.svg') }}"
-                        alt="블로그 아이콘"
-                        class="w-4 h-4 object-contain"
-                    >
+                <a href="{{ url_for('blogPost') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
+                    {{ 'bg-rose-50 text-brandDark' if active_page == 'blog' else 'text-stone-500 hover:bg-stone-50 font-normal' }}">
+                    <svg class="w-4 h-4" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M12.7502 2.125H4.25016C3.46776 2.125 2.8335 2.75926 2.8335 3.54167V13.4583C2.8335 14.2407 3.46776 14.875 4.25016 14.875H12.7502C13.5326 14.875 14.1668 14.2407 14.1668 13.4583V3.54167C14.1668 2.75926 13.5326 2.125 12.7502 2.125Z" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M5.6665 5.66663H11.3332M5.6665 8.49996H11.3332M5.6665 11.3333H9.20817" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                     블로그
                 </a>
 
-                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl text-stone-500 hover:bg-stone-50 text-sm">
-                    <img
-                        src="{{ url_for('static', filename='images/guestbook.svg') }}"
-                        alt="방명록 아이콘"
-                        class="w-4 h-4 object-contain"
-                    >
+                <a href="/guestbook" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
+                    {{ 'bg-rose-50 text-brandDark' if active_page == 'guestbook' else 'text-stone-500 hover:bg-stone-50 font-normal' }}">
+                    <svg class="w-4 h-4" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M8.49984 4.25004C7.22484 3.32921 5.38317 2.83337 3.5415 2.83337V12.0417C5.38317 12.0417 7.22484 12.5375 8.49984 13.4584C9.77484 12.5375 11.6165 12.0417 13.4582 12.0417V2.83337C11.6165 2.83337 9.77484 3.32921 8.49984 4.25004Z" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8.5 4.25V13.4583" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                     방명록
                 </a>
             </nav>
@@ -213,104 +251,198 @@
 
     </div>
 
+    <button
+        type="button"
+        id="logout-button"
+        class="w-full py-[11px] rounded-[10px] border border-[#E8E0D8] bg-[#FEFBF8] text-sm font-medium text-stone-500 hover:bg-[#F5F0EB] transition"
+    >
+        로그아웃
+    </button>
+
      </aside>
 
     <!--방명록-->
-    <div class="w-[700px] h-[633.53px] shrink-0 rounded-[20px] border border-[#E8E0D8] bg-[#FEFBF8]">
+    <div class="w-[700px] pb-[25px] shrink-0 rounded-[20px] border border-[#E8E0D8] bg-[#FEFBF8]">
        
-        <h2 class="text-xl font-bold relative top-[27px] left-[25px]"">
+        <h2 class="text-xl font-bold relative top-[27px] left-[25px] ml-[10px]">
             방명록
         </h2>
         <!-- 방명록 입력창 -->
          <!--방명록 글자가 mt-[25px]로 고정해 입력창도 mt-[67px]로 고정-->
-        <div class="inline-flex w-[626px] h-[50px] py-[7px] pr-[7px] pl-[17px] ml-[25px] mt-[67px] justify-end items-start gap-2 rounded-full border border-[#E8E0D8] bg-[#FBF8F5]">
+        <form action="{{ url_for('create_guestbook') }}" method="post"
+            class="inline-flex w-[650px] h-[50px] py-[7px] pr-[7px] pl-[17px] ml-[25px] mt-[67px] justify-end items-start gap-2 rounded-full border border-[#E8E0D8] bg-[#FBF8F5]">
             <input
-                class="flex w-[552px] h-[20px] pl-[17px] py-[15px] items-center shrink-0 text-sm font-normal text-[#7D726A] placeholder:text-[#7D726A] placeholder:font-normal placeholder:text-sm focus:outline-none"
+                name="content"
+                class="flex w-[552px] h-[20px] pl-[5px] py-[15px] items-center shrink-0 text-sm font-normal text-[#7D726A] placeholder:text-[#7D726A] placeholder:font-normal placeholder:text-sm focus:outline-none"
                 type="text"
                 placeholder="방명록을 남겨보세요."
+                required
                 />
             <!-- 등록 버튼 -->
-            <button type="button"
-                class="flex w-[62px] h-[36px] shrink-0 px-0 pt-[10px] pr-[17.644px] pb-[11px] pl-[18px] justify-center items-center rounded-full bg-brandDark text-[13px] font-normal leading-normal text-white">
+            <button type="submit"
+                class="flex w-[62px] h-[36px] shrink-0 px-0 pt-[10px] pr-[17.644px] pb-[11px] pl-[18px] mr-[5px] justify-center items-center rounded-full bg-brandDark text-[13px] font-normal leading-normal text-white">
                     등록
             </button>
-        </div>
-        <!--방명록 목록-->
-        <!--1문단은 mt-[25px] 삽입. 입력창과 겹치는 부분이 발생함.-->
-        <li class="flex w-[650px] h-[77.92px] pl-[25px] mt-[25px] gap-2 items-center border-t border-[#E8E0D8]">
-            <span class="w-6 h-6 rounded-full bg-rose-300 shrink-0"></span>
+        </form>
+
+        <!-- 방명록 목록 -->
+        <ul>
+            {% for e in entries %}
+            <li class="flex w-[650px] h-[60px] pl-[25px] ml-[25px] mr-[25px] mt-[24px] pt-[15px] gap-2 items-center border-t border-[#E8E0D8]">
+                <span class="w-[34px] h-[34px] rounded-full shrink-0 mr-[14px]" style="background-color: {{ e.writer_color }}"></span>
                 <div class="min-w-0">
                     <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
-                        커피한잔
-                      <span class="text-[11.5px] text-muted font-normal">· 20분 전</span></p>
+                        {{ e.writer_name }}
+                      <span class="text-[11.5px] relative -top-[1px] text-muted font-normal">· {{ e.time_ago }}</span></p>
                     <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
-                        오늘 글 잘 보고 갑니다 :) 항상 응원해요!
+                        {{ e.content }}
                     </p>
                 </div>
-        </li>
-
-        <li class="flex w-[650px] h-[77.92px] pl-[25px] gap-2 items-center border-t border-[#E8E0D8]">
-            <span class="w-6 h-6 rounded-full bg-green-300 shrink-0"></span>
-                <div class="min-w-0">
-                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
-                        달빛산책
-            <span class="text-[11.5px] text-muted font-normal">· 2시간 전</span></p>
-                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
-                        사진첩 새로 올라온 거 보러 왔어요~ 다음에도 기대할게요                    
-                    </p>
-                </div>
-        </li>
-
-        <li class="flex w-[650px] h-[77.92px] pl-[25px] gap-2 items-center border-t border-[#E8E0D8]">
-            <span class="w-6 h-6 rounded-full bg-amber-300 shrink-0"></span>
-                <div class="min-w-0">
-                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
-                        포근한 하루
-            <span class="text-[11.5px] text-muted font-normal">· 어제</span></p>
-                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
-                        텃밭 일기 넘 귀여워요 저도 시작해볼까 고민중 ㅎㅎ                    
-                    </p>
-                </div>
-        </li>
-
-         <li class="flex w-[650px] h-[77.92px] pl-[25px] gap-2 items-center border-t border-[#E8E0D8]">
-            <span class="w-6 h-6 rounded-full bg-orange-300 shrink-0"></span>
-                <div class="min-w-0">
-                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
-                        여름 소나기
-            <span class="text-[11.5px] text-muted font-normal">· 2일 전</span></p>
-                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
-                        제주도 여행기 잘 읽었어요! 저도 다음 달에 가는데 참고할게요                    
-                    </p>
-                </div>
-        </li>
-
-         <li class="flex w-[650px] h-[77.92px] pl-[25px] gap-2 items-center border-t border-[#E8E0D8]">
-            <span class="w-6 h-6 rounded-full bg-orange-300 shrink-0"></span>
-                <div class="min-w-0">
-                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
-                        노란우산
-            <span class="text-[11.5px] text-muted font-normal">· 3일 전</span></p>
-                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
-                        블로그 분위기가 너무 좋아요 자주 놀러올게요 :)                   
-                    </p>
-                </div>
-        </li>
-
-         <li class="flex w-[650px] h-[77.92px] pl-[25px] gap-2 items-center border-t border-[#E8E0D8]">
-            <span class="w-6 h-6 rounded-full bg-orange-300 shrink-0"></span>
-                <div class="min-w-0">
-                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
-                        초록물결
-            <span class="text-[11.5px] text-muted font-normal">· 5일 전</span></p>
-                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
-                        생일 축하드려요! 늦었지만 진심으로 축하해요                   
-                    </p>
-                </div>
-        </li>
-    
-
+            </li>
+            {% else %}
+            <li class="pl-[25px] mt-[25px] ml-[10px] text-sm text-[#7D726A]">아직 방명록이 없어요. 첫 글을 남겨보세요!</li>
+            {% endfor %}
+        </ul>
     </div>
     </div>
+
+    <script>
+            document.getElementById('logout-button').addEventListener('click', function () {
+                fetch('/logout', { method: 'POST' })
+                    .then(function () {
+                        alert('로그아웃했습니다');
+                        window.location.href = '/';
+                    })
+                    .catch(function () {
+                        alert('로그아웃 중 오류가 발생했습니다');
+                    });
+            });
+
+            const editForm = document.getElementById('profile-edit-form');
+            const profileImage = document.getElementById('profile-img');
+            const profileImgTrigger = document.getElementById('profile-img-trigger');
+            const imageInput = document.getElementById('edit-profile-img');
+
+            if (profileImgTrigger && imageInput) {
+                profileImgTrigger.addEventListener('click', () => imageInput.click());
+            }
+
+            if (imageInput && profileImage) {
+                imageInput.addEventListener('change', () => {
+                    const image = imageInput.files[0];
+                    if (!image) return;
+                    const reader = new FileReader();
+                    reader.addEventListener('load', () => { profileImage.src = reader.result; });
+                    reader.readAsDataURL(image);
+                });
+            }
+
+            const colorSwatches = document.querySelectorAll('.color-swatch');
+            const initialSwatch = document.querySelector('.color-swatch.ring-current');
+            let selectedColor = initialSwatch ? initialSwatch.dataset.color : (colorSwatches[0] ? colorSwatches[0].dataset.color : '#E68485');
+
+            colorSwatches.forEach((swatch) => {
+                swatch.addEventListener('click', () => {
+                    colorSwatches.forEach((other) => other.classList.remove('ring-current'));
+                    colorSwatches.forEach((other) => other.style.setProperty('--tw-ring-color', 'transparent'));
+                    swatch.classList.add('ring-current');
+                    swatch.style.setProperty('--tw-ring-color', swatch.dataset.color);
+                    selectedColor = swatch.dataset.color;
+                    if (profileImage) profileImage.style.backgroundColor = selectedColor;
+                });
+            });
+
+            if (editForm) {
+                editForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    const name = document.getElementById('edit-name').value.trim();
+                    const description = document.getElementById('edit-desc').value.trim();
+                    if (!name || !description) return;
+
+                    fetch('{{ url_for("update_profile") }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: name, description: description, color: selectedColor })
+                    })
+                        .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
+                        .then(({ ok, data }) => {
+                            if (!ok) {
+                                alert(data.message || '저장에 실패했습니다');
+                                return;
+                            }
+                            document.getElementById('profile-name').textContent = data.username;
+                            document.getElementById('profile-desc').textContent = data.profile_desc;
+                            document.getElementById('profile-circle').style.backgroundColor = data.profile_color;
+                            settingsPopup.hidden = true;
+                        })
+                        .catch(() => alert('저장 중 오류가 발생했습니다'));
+                });
+            }
+
+            const settingsButton = document.getElementById('settings-button');
+            const settingsPopup = document.getElementById('settings-popup');
+            const settingsCloseButton = document.getElementById('settings-close-button');
+            const settingsCancelButton = document.getElementById('settings-cancel-button');
+
+            settingsButton.addEventListener('click', () => { settingsPopup.hidden = false; });
+            settingsCloseButton.addEventListener('click', () => { settingsPopup.hidden = true; });
+            settingsCancelButton.addEventListener('click', () => { settingsPopup.hidden = true; });
+            settingsPopup.addEventListener('click', (event) => {
+                if (event.target === settingsPopup) settingsPopup.hidden = true;
+            });
+
+            const neighborAddOpenButton = document.getElementById('neighbor-add-open-button');
+            const neighborAddPopup = document.getElementById('neighbor-add-popup');
+            const neighborAddCloseButton = document.getElementById('neighbor-add-close-button');
+            const neighborCount = document.getElementById('neighbor-count');
+
+            neighborAddOpenButton.addEventListener('click', () => { neighborAddPopup.hidden = false; });
+            neighborAddCloseButton.addEventListener('click', () => { neighborAddPopup.hidden = true; });
+            neighborAddPopup.addEventListener('click', (event) => {
+                if (event.target === neighborAddPopup) neighborAddPopup.hidden = true;
+            });
+
+            neighborAddPopup.querySelectorAll('.neighbor-add-user-button').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.targetId;
+                    fetch('{{ url_for("add_neighbor") }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ target_id: targetId })
+                    })
+                        .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
+                        .then(({ ok, data }) => {
+                            if (!ok) {
+                                alert(data.message || '이웃추가에 실패했습니다');
+                                return;
+                            }
+                            button.textContent = '완료';
+                            button.disabled = true;
+                            button.classList.remove('bg-[#FEFBF8]', 'text-[#338D6B]', 'hover:bg-[#F5F0EB]');
+                            button.classList.add('bg-stone-100', 'text-stone-400', 'border-stone-300', 'cursor-not-allowed');
+                            neighborCount.textContent = data.neighbor_count;
+
+                            const emptyMessage = document.getElementById('neighbor-list-empty');
+                            if (emptyMessage) emptyMessage.remove();
+                            const username = button.closest('div').querySelector('span').textContent;
+                            const neighborItem = document.createElement('div');
+                            neighborItem.className = 'px-3 py-2 rounded-xl border border-stone-100 text-sm';
+                            neighborItem.textContent = username;
+                            neighborListPopup.querySelector('.overflow-y-auto').appendChild(neighborItem);
+                        })
+                        .catch(() => alert('이웃추가 중 오류가 발생했습니다'));
+                });
+            });
+
+            const neighborListButton = document.getElementById('neighbor-list-button');
+            const neighborListPopup = document.getElementById('neighbor-list-popup');
+            const neighborListCloseButton = document.getElementById('neighbor-list-close-button');
+
+            neighborListButton.addEventListener('click', () => { neighborListPopup.hidden = false; });
+            neighborListCloseButton.addEventListener('click', () => { neighborListPopup.hidden = true; });
+            neighborListPopup.addEventListener('click', (event) => {
+                if (event.target === neighborListPopup) neighborListPopup.hidden = true;
+            });
+        </script>
 
 </body>

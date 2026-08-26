@@ -15,7 +15,7 @@
     </head>
 
     <body class="min-h-screen bg-[#FBF3EA] flex items-start justify-center p-8">
-    <div class="w-full max-w-[1440px] flex items-start gap-6">
+    <div class="w-full max-w-[1440px] flex items-start gap-6 items-center">
     <div class="flex w-[1440px] h-[1144.84px] shrink-0 px-[40px] py-[32px] justify-center items-start gap-[24px]">
 
     <aside class="w-[280px] shrink-0 flex flex-col gap-5">
@@ -63,14 +63,14 @@
                     </span>
                 </div>
 
-                <div class="flex-1 text-center mt-[17px] px-2 border-r border-stone-200">
-                    <p class="text-xl font-semibold">
+                <button type="button" id="neighbor-list-button" class="flex-1 text-center mt-[17px] px-2 border-r border-stone-200">
+                    <p id="neighbor-count" class="text-xl font-semibold">
                         {{ stats.neighbors }}
                     </p>
                     <span class="text-xs text-stone-500">
                         이웃
                     </span>
-                </div>
+                </button>
 
                 <div class="flex-1 text-center mt-[17px] px-2">
                     <p class="text-xl font-semibold">
@@ -140,25 +140,68 @@
             </div>
         </div>
 
+        <!-- 이웃추가 팝업 -->
+        <div id="neighbor-add-popup" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-[#FEFBF8] rounded-[24px] p-6 w-[320px] max-h-[70vh] flex flex-col shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-sm">이웃 목록</h3>
+                    <button id="neighbor-add-close-button" type="button" class="text-stone-400 hover:text-stone-600">✕</button>
+                </div>
+                <div class="overflow-y-auto space-y-2">
+                    {% for u in all_users %}
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-[#E8E0D8] bg-[#FBF8F5]">
+                        <span class="text-sm">{{ u.username }}</span>
+                        <button
+                            type="button"
+                            class="neighbor-add-user-button px-3 py-1 rounded-lg text-xs font-medium border border-[#338D6B]
+                                   {% if u.is_added %}bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed{% else %}bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]{% endif %}"
+                            data-target-id="{{ u._id }}"
+                            {% if u.is_added %}disabled{% endif %}
+                        >
+                            {% if u.is_added %}완료{% else %}+ 추가{% endif %}
+                        </button>
+                    </div>
+                    {% else %}
+                    <p class="text-xs text-stone-400 text-center py-4">추가할 회원이 없습니다</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 이웃 목록 팝업 -->
+        <div id="neighbor-list-popup" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-[#FEFBF8] rounded-[24px] p-6 w-[320px] max-h-[70vh] flex flex-col shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-sm">이웃 목록</h3>
+                    <button id="neighbor-list-close-button" type="button" class="text-stone-400 hover:text-stone-600">✕</button>
+                </div>
+                <div class="overflow-y-auto space-y-2">
+                    {% for n in neighbor_list %}
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-[#E8E0D8] bg-[#FBF8F5] text-sm">
+                        <span>{{ n.username }}</span>
+                        <button
+                            type="button"
+                            class="neighbor-profile-button px-3 py-1 rounded-lg text-xs font-medium border border-[#338D6B] bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]"
+                            data-user-id="{{ n._id }}"
+                        >
+                            프로필
+                        </button>
+                    </div>
+                    {% else %}
+                    <p id="neighbor-list-empty" class="text-xs text-stone-400 text-center py-4">아직 추가한 이웃이 없습니다</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
         <div class="p-4">
-    <form action="{{ url_for('add_neighbor') }}" method="post">
-        <button
-            type="submit"
-            {% if is_neighbor %}disabled{% endif %}
-            class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition
-                   {% if is_neighbor %}
-                       bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed
-                   {% else %}
-                       bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]
-                   {% endif %}"
-        >
-            {% if is_neighbor %}
-                이웃추가 완료
-            {% else %}
-                + 이웃추가
-            {% endif %}
-        </button>
-    </form>
+    <button
+        type="button"
+        id="neighbor-add-open-button"
+        class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]"
+    >
+        + 이웃추가
+    </button>
 </div>
 
         </div>
@@ -166,21 +209,21 @@
 
          <div class="rounded-[20px] border border-[#E8E0D8] bg-[#FEFBF8]">
             <nav class="px-3 pb-3 space-y-1 mt-[11px]">
-                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-50 text-brandDark font-medium text-sm">
-                    <img
-                        src="{{ url_for('static', filename='images/blog.svg') }}"
-                        alt="블로그 아이콘"
-                        class="w-4 h-4 object-contain"
-                    >
+                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
+                    {{ 'bg-rose-50 text-brandDark' if active_page == 'blog' else 'text-stone-500 hover:bg-stone-50 font-normal' }}">
+                    <svg class="w-4 h-4" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M12.7502 2.125H4.25016C3.46776 2.125 2.8335 2.75926 2.8335 3.54167V13.4583C2.8335 14.2407 3.46776 14.875 4.25016 14.875H12.7502C13.5326 14.875 14.1668 14.2407 14.1668 13.4583V3.54167C14.1668 2.75926 13.5326 2.125 12.7502 2.125Z" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M5.6665 5.66663H11.3332M5.6665 8.49996H11.3332M5.6665 11.3333H9.20817" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                     블로그
                 </a>
 
-                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl text-stone-500 hover:bg-stone-50 text-sm">
-                    <img
-                        src="{{ url_for('static', filename='images/guestbook.svg') }}"
-                        alt="방명록 아이콘"
-                        class="w-4 h-4 object-contain"
-                    >
+                <a href="/guestbook" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
+                    {{ 'bg-rose-50 text-brandDark' if active_page == 'guestbook' else 'text-stone-500 hover:bg-stone-50 font-normal' }}">
+                    <svg class="w-4 h-4" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M8.49984 4.25004C7.22484 3.32921 5.38317 2.83337 3.5415 2.83337V12.0417C5.38317 12.0417 7.22484 12.5375 8.49984 13.4584C9.77484 12.5375 11.6165 12.0417 13.4582 12.0417V2.83337C11.6165 2.83337 9.77484 3.32921 8.49984 4.25004Z" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8.5 4.25V13.4583" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                     방명록
                 </a>
             </nav>
@@ -215,6 +258,13 @@
 
 </div>
 
+    <button
+        type="button"
+        id="logout-button"
+        class="w-full py-[11px] rounded-[10px] border border-[#E8E0D8] bg-[#FEFBF8] text-sm font-medium text-stone-500 hover:bg-[#F5F0EB] transition"
+    >
+        로그아웃
+    </button>
 
      </aside>
 
@@ -343,7 +393,7 @@
                 <div class="flex items-center justify-between mt-3">
 
                     <span class="text-[11px] text-muted">
-                        {{ post.created_at.strftime('%m.%d') if post.created_at else '' }}
+                        {{ post.created_at if post.created_at else '' }}
                     </span>
 
 
@@ -358,13 +408,14 @@
                             {{ post.likes  | default(0)}}
                         </button>
 
+
                         <span class="flex items-center gap-1">
                             <img
                             src="{{ url_for('static', filename='images/comment.png') }}"
                              alt="댓글 아이콘"
                             class="w-4 h-4 object-contain"
                             >
-                            {{ post.comments_count  | default(0)}}
+                            {{ post.comments_count }}
                         </span>
 
                     </div>
@@ -396,34 +447,24 @@
 
 </main>
 
-    <aside class="w-[180px] shrink-0">
-        <div class="bg-card rounded-2xl shadow-sm p-4">
+    <aside class="w-[280px] shrink-0 ml-[24px]">
+        <div class="bg-card rounded-[20px] shadow-sm p-4">
             <div class="flex items-center justify-between mb-3">
                 <h3 class="text-sm font-bold">방문록</h3>
-                <a href="#" class="text-[11px] text-muted hover:text-brandDark">자세히</a>
+                <a href="/guestbook" class="text-[11px] text-muted hover:text-brandDark">자세히</a>
             </div>
-            <ul class="space-y-3">
-                <li class="flex gap-2">
-                    <span class="w-6 h-6 rounded-full bg-rose-300 shrink-0"></span>
+            <ul class="space-y-2">
+                {% for e in guestbook_entries %}
+                <li class="flex items-start gap-2 text-xs border-t border-stone-100 pt-2">
+                    <span class="w-[20px] h-[20px] rounded-full shrink-0" style="background-color: {{ e.writer_color }}"></span>
                     <div class="min-w-0">
-                        <p class="text-xs font-medium truncate">커피친구 <span class="text-[10px] text-muted font-normal">· 3분 전</span></p>
-                        <p class="text-[11px] text-muted line-clamp-2">오늘 글 보고 갔다가요 :) 항상 응원해요!</p>
+                        <p class="font-medium truncate">{{ e.writer_name }} <span class="text-muted">· {{ e.time_ago }}</span></p>
+                        <p class="text-muted truncate">{{ e.content }}</p>
                     </div>
                 </li>
-                <li class="flex gap-2">
-                    <span class="w-6 h-6 rounded-full bg-orange-300 shrink-0"></span>
-                    <div class="min-w-0">
-                        <p class="text-xs font-medium truncate">알수없음 <span class="text-[10px] text-muted font-normal">· 20분 전</span></p>
-                        <p class="text-[11px] text-muted line-clamp-2">사진이랑 글 보러 자주 놀러 올게요!</p>
-                    </div>
-                </li>
-                <li class="flex gap-2">
-                    <span class="w-6 h-6 rounded-full bg-amber-300 shrink-0"></span>
-                    <div class="min-w-0">
-                        <p class="text-xs font-medium truncate">문근영님 <span class="text-[10px] text-muted font-normal">· 1시간 전</span></p>
-                        <p class="text-[11px] text-muted line-clamp-2">방금 온 신입 방문자예요 잘 부탁드려요.</p>
-                    </div>
-                </li>
+                {% else %}
+                <li class="text-xs text-muted">아직 방명록이 없어요.</li>
+                {% endfor %}
             </ul>
             <div class="mt-4 flex items-center gap-1">
                 <input type="text" placeholder="메시지를 남겨보세요"
@@ -439,6 +480,17 @@
     </div>
 
     <script>
+            document.getElementById('logout-button').addEventListener('click', function () {
+                fetch('/logout', { method: 'POST' })
+                    .then(function () {
+                        alert('로그아웃했습니다');
+                        window.location.href = '/';
+                    })
+                    .catch(function () {
+                        alert('로그아웃 중 오류가 발생했습니다');
+                    });
+            });
+
             const editForm = document.getElementById('profile-edit-form');
             const profileImage = document.getElementById('profile-img');
             const profileImgTrigger = document.getElementById('profile-img-trigger');
@@ -511,6 +563,60 @@
             settingsPopup.addEventListener('click', (event) => {
                 if (event.target === settingsPopup) settingsPopup.hidden = true;
             });
+
+            const neighborAddOpenButton = document.getElementById('neighbor-add-open-button');
+            const neighborAddPopup = document.getElementById('neighbor-add-popup');
+            const neighborAddCloseButton = document.getElementById('neighbor-add-close-button');
+            const neighborCount = document.getElementById('neighbor-count');
+
+            neighborAddOpenButton.addEventListener('click', () => { neighborAddPopup.hidden = false; });
+            neighborAddCloseButton.addEventListener('click', () => { neighborAddPopup.hidden = true; });
+            neighborAddPopup.addEventListener('click', (event) => {
+                if (event.target === neighborAddPopup) neighborAddPopup.hidden = true;
+            });
+
+            neighborAddPopup.querySelectorAll('.neighbor-add-user-button').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.targetId;
+                    fetch('{{ url_for("add_neighbor") }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ target_id: targetId })
+                    })
+                        .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
+                        .then(({ ok, data }) => {
+                            if (!ok) {
+                                alert(data.message || '이웃추가에 실패했습니다');
+                                return;
+                            }
+                            button.textContent = '완료';
+                            button.disabled = true;
+                            button.classList.remove('bg-[#FEFBF8]', 'text-[#338D6B]', 'hover:bg-[#F5F0EB]');
+                            button.classList.add('bg-stone-100', 'text-stone-400', 'border-stone-300', 'cursor-not-allowed');
+                            neighborCount.textContent = data.neighbor_count;
+
+                            const emptyMessage = document.getElementById('neighbor-list-empty');
+                            if (emptyMessage) emptyMessage.remove();
+                            const username = button.closest('div').querySelector('span').textContent;
+                            const neighborItem = document.createElement('div');
+                            neighborItem.className = 'px-3 py-2 rounded-xl border border-stone-100 text-sm';
+                            neighborItem.textContent = username;
+                            neighborListPopup.querySelector('.overflow-y-auto').appendChild(neighborItem);
+                        })
+                        .catch(() => alert('이웃추가 중 오류가 발생했습니다'));
+                });
+            });
+
+            const neighborListButton = document.getElementById('neighbor-list-button');
+            const neighborListPopup = document.getElementById('neighbor-list-popup');
+            const neighborListCloseButton = document.getElementById('neighbor-list-close-button');
+
+            neighborListButton.addEventListener('click', () => { neighborListPopup.hidden = false; });
+            neighborListCloseButton.addEventListener('click', () => { neighborListPopup.hidden = true; });
+            neighborListPopup.addEventListener('click', (event) => {
+                if (event.target === neighborListPopup) neighborListPopup.hidden = true;
+            });
+
             const postSection = document.querySelector('[aria-label="게시글 목록"]');
             const sortSelect = document.getElementById('sort-select');
 
@@ -574,4 +680,3 @@
         </script>
     </body>
 </html>
-

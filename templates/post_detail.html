@@ -37,17 +37,18 @@
                         <img
                         src="{{ url_for('static', filename='images/Vector.png') }}"
                         class="pr-[6px]">
-                        목록으로
+                        <a href="{{url_for('blogPost')}}">목록으로</a>
                     </div>
                     <div class="flex items-center gap-[8px]">
-                        <button class="flex items-center gap-[8px] border-[1.5px] rounded-[10px] p-[8px] bg-bg-button">
+                        <a href="{{ url_for('update_post', post_id=post_id) }}" class="flex items-center gap-[8px] border-[1.5px] rounded-[10px] p-[8px] bg-bg-button">
                             <img src="{{ url_for('static', filename='images/pen.png') }}">
                             수정
-                        </button>
-                        <button onclick="alert('삭제했습니다')" class="flex items-center gap-[8px] border-[1.5px] rounded-[10px] p-[8px] bg-bg-button text-delete-bt">
+                        </a>
+                        
+                        <a href="{{ url_for('delete_post', post_id=post_id) }}" onclick="alert('삭제했습니다')" class="flex items-center gap-[8px] border-[1.5px] rounded-[10px] p-[8px] bg-bg-button text-delete-bt">
                             <img src="{{ url_for('static', filename='images/delete.png') }}">
                             삭제
-                        </button>
+                        </a>
                     </div>
                 </div>
                 <!--메인-->
