@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, session
+from flask import Flask, request, render_template, redirect, session, url_for
 from pymongo import MongoClient, DESCENDING
 from datetime import datetime, timezone
 from bson import ObjectId
@@ -42,14 +42,8 @@ def create_blog():
         "likes": likes,
     })
 
-    return render_template(
-        "post_detail.html",
-        post_id = str(result.inserted_id),
-        title = title,
-        content = content,
-        likes = likes,
-        created_at = created_at,
-    )
+    return redirect(url_for('post_detail', post_id=result.inserted_id))
+
 
 # # 3. 게시글 수정 (update)
 # # <form> 태그는 GET/POST만 지원하며, PUT이나 PATCH 메서드를 지원하지 않아서 POST로 대체

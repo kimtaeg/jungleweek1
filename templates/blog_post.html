@@ -399,14 +399,15 @@
 
                     <div class="flex items-center gap-3 text-[11px] text-muted">
 
-                        <span class="flex items-center gap-1">
+                        <button id="like-button" class="like-button flex items-center gap-1">
                             <img
                             src="{{ url_for('static', filename='images/like.png') }}"
                              alt="좋아요 아이콘"
                             class="w-4 h-4 object-contain"
                             >
-                            {{ post.likes_count }}
-                        </span>
+                            {{ post.likes  | default(0)}}
+                        </button>
+
 
                         <span class="flex items-center gap-1">
                             <img
@@ -668,6 +669,14 @@
 
             });
 
+            //좋아요 기능
+            const likeBtn = document.getElementById('like-btn');
+            const likeCount = document.getElementById('like-count');
+
+            likeBtn.addEventListener('click', () => {
+            let count = parseInt(likeCount.textContent);
+            likeCount.textContent = count + 1;
+            });
         </script>
     </body>
 </html>
