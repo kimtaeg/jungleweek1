@@ -34,7 +34,7 @@ def create_blog():
     content = request.form.get('content')
     likes= 0
     
-    db.blog.insert_one({
+    result = db.blog.insert_one({
         "author_id": author_id,
         "created_at": created_at,
         "title" : title,
@@ -44,35 +44,36 @@ def create_blog():
 
     return render_template(
         "post_detail.html",
+        post_id = str(result.inserted_id),
         title = title,
         content = content,
         likes = likes,
         created_at = created_at,
     )
 
-# 3. 게시글 수정 (update)
-# <form> 태그는 GET/POST만 지원하며, PUT이나 PATCH 메서드를 지원하지 않아서 POST로 대체
-@app.route("/blogs", methods=['POST'])
-def update_blog(blog_id):
-    # blog_post.html에서 받은 폼 - 새 제목
-    new_title = request.form.get('title')
-    # blog_post.html에서 받은 폼 - 새 내용
-    new_content = request.form.get('content')
+# # 3. 게시글 수정 (update)
+# # <form> 태그는 GET/POST만 지원하며, PUT이나 PATCH 메서드를 지원하지 않아서 POST로 대체
+# @app.route("/blogs", methods=['POST'])
+# def update_blog(blog_id):
+#     # blog_post.html에서 받은 폼 - 새 제목
+#     new_title = request.form.get('title')
+#     # blog_post.html에서 받은 폼 - 새 내용
+#     new_content = request.form.get('content')
 
-    # db 업데이트
-    db.blog.update_one({
-        {'_id': blog_id},
-        {"title" : new_title},
-        {"content" : new_content},
-    })
+#     # db 업데이트
+#     db.blog.update_one({
+#         {'_id': blog_id},
+#         {"title" : new_title},
+#         {"content" : new_content},
+#     })
 
-    return redirect('/blogs')
+#     return redirect('/blogs')
 
 # 4. 게시글 삭제 (delete)
-# <form> 태그는 GET/POST만 지원하며, PUT이나 PATCH 메서드를 지원하지 않아서 POST로 대체
-@app.route("/blogs", methods=['POST'])
 def delete_blog(blog_id):
-    db.blog.delete_one({'_id': blog_id})
+    db.blog.delete_one({'_id': ObjectId(blog_id)})
+    return
+    
 
 
 if __name__=="__main__":

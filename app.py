@@ -82,9 +82,23 @@ def signup():
     })
     return jsonify({"message": "회원가입이 완료되었습니다"}), 200
 
-@app.route('/post_detail')
-def post_detail():
-    return render_template('post_detail.html')
+@app.route('/post_detail/<post_id>')
+def post_detail(post_id):
+    post = db.blog.find_one({"_id": ObjectId(post_id)})
+
+    title = post['title']
+    content = post['content']
+    likes = post['likes']
+    created_at = post['created_at']
+
+    return render_template(
+        'post_detail.html',
+        post_id = post_id,
+        title = title,
+        content = content,
+        likes = likes,
+        created_at = created_at,
+    )
 
 @app.route('/blog_post')
 def blogPost():
@@ -156,6 +170,17 @@ def add_neighbor():
 @app.route('/create_post', methods=['POST'])
 def create_post():
     return blog_api.create_blog()
+
+@app.route('/update_post/<post_id>', methods=['GET'])
+def update_post(post_id):
+    post = db.blog.find_one({"_id": ObjectId(post_id)})
+    return render_template('writing.html',post = post)
+
+@app.route('/delte_post/<post_id>', methods=['GET'])
+def delete_post(post_id):
+    db.blog.delete_one({'_id': ObjectId(post_id)})
+    return redirect(url_for('blogPost'))
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

@@ -283,7 +283,7 @@
         {% for post in posts[:8] %}
 
         <a
-            href="{{ url_for('post_detail', post_id=post.id) }}"
+            href="{{ url_for('post_detail', post_id=post._id) }}"
             class="block bg-card rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition group"
         >
 
