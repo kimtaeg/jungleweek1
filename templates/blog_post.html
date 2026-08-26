@@ -141,24 +141,23 @@
         </div>
 
         <div class="p-4">
-    <form action="{{ url_for('add_neighbor') }}" method="post">
-        <button
-            type="submit"
-            {% if is_neighbor %}disabled{% endif %}
-            class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition
-                   {% if is_neighbor %}
-                       bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed
-                   {% else %}
-                       bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]
-                   {% endif %}"
-        >
-            {% if is_neighbor %}
-                이웃추가 완료
-            {% else %}
-                + 이웃추가
-            {% endif %}
-        </button>
-    </form>
+    <button
+        type="button"
+        {% if is_neighbor %}disabled{% endif %}
+        onclick="alert('아직 구현되지 않은 기능입니다.')"
+        class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition
+               {% if is_neighbor %}
+                   bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed
+               {% else %}
+                   bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]
+               {% endif %}"
+    >
+        {% if is_neighbor %}
+            이웃추가 완료
+        {% else %}
+            + 이웃추가
+        {% endif %}
+    </button>
 </div>
 
         </div>
@@ -166,21 +165,21 @@
 
          <div class="rounded-[20px] border border-[#E8E0D8] bg-[#FEFBF8]">
             <nav class="px-3 pb-3 space-y-1 mt-[11px]">
-                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-50 text-brandDark font-medium text-sm">
-                    <img
-                        src="{{ url_for('static', filename='images/blog.svg') }}"
-                        alt="블로그 아이콘"
-                        class="w-4 h-4 object-contain"
-                    >
+                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
+                    {{ 'bg-rose-50 text-brandDark' if active_page == 'blog' else 'text-stone-500 hover:bg-stone-50 font-normal' }}">
+                    <svg class="w-4 h-4" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M12.7502 2.125H4.25016C3.46776 2.125 2.8335 2.75926 2.8335 3.54167V13.4583C2.8335 14.2407 3.46776 14.875 4.25016 14.875H12.7502C13.5326 14.875 14.1668 14.2407 14.1668 13.4583V3.54167C14.1668 2.75926 13.5326 2.125 12.7502 2.125Z" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M5.6665 5.66663H11.3332M5.6665 8.49996H11.3332M5.6665 11.3333H9.20817" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                     블로그
                 </a>
 
-                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl text-stone-500 hover:bg-stone-50 text-sm">
-                    <img
-                        src="{{ url_for('static', filename='images/guestbook.svg') }}"
-                        alt="방명록 아이콘"
-                        class="w-4 h-4 object-contain"
-                    >
+                <a href="/guestbook" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium
+                    {{ 'bg-rose-50 text-brandDark' if active_page == 'guestbook' else 'text-stone-500 hover:bg-stone-50 font-normal' }}">
+                    <svg class="w-4 h-4" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M8.49984 4.25004C7.22484 3.32921 5.38317 2.83337 3.5415 2.83337V12.0417C5.38317 12.0417 7.22484 12.5375 8.49984 13.4584C9.77484 12.5375 11.6165 12.0417 13.4582 12.0417V2.83337C11.6165 2.83337 9.77484 3.32921 8.49984 4.25004Z" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8.5 4.25V13.4583" stroke="currentColor" stroke-width="1.20417" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                     방명록
                 </a>
             </nav>
@@ -355,7 +354,7 @@
                              alt="좋아요 아이콘"
                             class="w-4 h-4 object-contain"
                             >
-                            {{ post.likes_count  | default(0)}}
+                            {{ post.likes_count }}
                         </span>
 
                         <span class="flex items-center gap-1">
@@ -364,7 +363,7 @@
                              alt="댓글 아이콘"
                             class="w-4 h-4 object-contain"
                             >
-                            {{ post.comments_count  | default(0)}}
+                            {{ post.comments_count }}
                         </span>
 
                     </div>
@@ -566,4 +565,3 @@
         </script>
     </body>
 </html>
-
