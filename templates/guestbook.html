@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <title>몽글몽글 방명록</title>
+        <style type="text/tailwindcss">
+            @theme {
+                --color-card: #ffffff;
+                --color-muted: #78716c;
+                --color-brandDark: #f43f5e;
+            }
+        </style>
+    </head>
+
+    <body class="min-h-screen bg-[#FBF0E6] flex items-start justify-center p-8">
+    <div class="flex w-[1440px] h-[697.53px] pt-8 pr-[218px] pb-8 pl-10 items-start gap-[202px] shrink-0">
+        <!-- 프로필 창-->
+        <aside class="w-[280px] shrink-0 flex flex-col gap-5">
+
+            <div class="bg-card rounded-2xl shadow-sm overflow-hidden">
+                <!-- 프로필 상단 배경 -->
+                <div class="relative h-16 bg-gradient-to-r from-rose-200 to-orange-100">
+                    <div class="absolute top-2 right-2 flex gap-2">
+                        <button id="settings-button" type="button"
+                            class="w-7 h-7 flex items-center justify-center rounded-full bg-white/80 hover:bg-white shadow">
+                            <img src="{{ url_for('static', filename='images/pen.png') }}" class="w-3.5 h-3.5" alt="수정">
+                        </button>
+                    </div>
+                </div>
+                <!-- 프로필 이미지, 이름, 소개글, 통계 -->
+                <div class="relative -mt-8 flex flex-col items-center pb-4">
+
+                    <div id="profile-circle" class="flex w-[80px] h-[80px] p-[25px] justify-center items-center rounded-[40px] border-[4px] border-[#FEFBF8] shadow-[0_6px_14px_0_rgba(54,44,36,0.12)] overflow-hidden" style="background-color: {{ profile_color }}">
+                        <img
+                            src="{{ url_for('static', filename='images/profile.svg') }}"
+                            alt="프로필 아이콘"
+                            class="w-full h-full object-contain"
+                        >
+                    </div>
+
+
+                <div class="pt-2 pb-5 px-5 text-center">
+
+                    <h2 id="profile-name" class="text-base font-bold text-center">
+                        {{ username }}
+                    </h2>
+
+                    <p id="profile-desc" class="flex h-[31px] mt-[10px] px-[14px] py-[6px] justify-center items-center rounded-full bg-[#FBF0E6] text-[13px] text-[#7D726A] text-center font-['Gowun_Dodum'] text-[13px] font-normal leading-normal">
+                        {{ profile_desc }}
+                    </p>
+
+                 <div class="flex w-[238px] h-[55px] mt-[18px] justify-center border-t border-[#E8E0D8]">
+
+                    <div class="flex-1 text-center mt-[17px] px-2 border-r border-stone-200">
+                        <p class="text-xl font-semibold">
+                            {{ stats.posts }}
+                        </p>
+                        <span class="text-xs text-stone-500">
+                            게시글
+                        </span>
+                    </div>
+
+                    <div class="flex-1 text-center mt-[17px] px-2 border-r border-stone-200">
+                        <p class="text-xl font-semibold">
+                            {{ stats.neighbors }}
+                        </p>
+                        <span class="text-xs text-stone-500">
+                            이웃
+                        </span>
+                    </div>
+
+                    <div class="flex-1 text-center mt-[17px] px-2">
+                        <p class="text-xl font-semibold">
+                            {{ stats.visitors }}
+                        </p>
+                        <span class="text-xs text-stone-500">
+                            방문
+                        </span>
+                    </div>
+
+            </div>
+
+
+            </div>
+        </div>
+        <!-- 프로필 수정 팝업 -->
+        <div id="settings-popup" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-[#FEFBF8] rounded-[24px] p-6 w-[320px] shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-sm">프로필 수정</h3>
+                    <button id="settings-close-button" type="button" class="text-stone-400 hover:text-stone-600">✕</button>
+                </div>
+
+                <form id="profile-edit-form">
+
+                    <div class="flex justify-center">
+                        <button type="button" id="profile-img-trigger"
+                                class="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow">
+                            <img id="profile-img"
+                                 src="{{ url_for('static', filename='images/profile.svg') }}"
+                                 alt="프로필 이미지"
+                                 class="w-full h-full object-contain"
+                                 style="background-color: {{ profile_color }}">
+                        </button>
+                        <input id="edit-profile-img" type="file" accept="image" class="hidden">
+                    </div>
+
+                    <p class="text-center text-xs text-stone-500 mt-3 mb-2">프로필 색상</p>
+                    <div id="color-swatches" class="flex justify-center gap-3 mb-5">
+                        {% for color in ['#E68485', '#77C4A3', '#BAA4E2', '#E7B375', '#71BCDF'] %}
+                        <button type="button" data-color="{{ color }}"
+                                class="color-swatch w-7 h-7 rounded-full ring-2 ring-offset-2 {{ 'ring-current' if color == profile_color else '' }}"
+                                style="background-color: {{ color }}; {{ '--tw-ring-color: ' ~ color ~ ';' if color == profile_color else '--tw-ring-color: transparent;' }}"></button>
+                        {% endfor %}
+                    </div>
+
+                    <label for="edit-name" class="block text-xs text-stone-500 mb-1">닉네임</label>
+                    <input id="edit-name" type="text" value="{{ username }}"
+                           class="w-full rounded-xl border border-stone-200 p-3 text-sm mb-4 focus:outline-none focus:ring-1 focus:ring-rose-200">
+
+                    <label for="edit-desc" class="block text-xs text-stone-500 mb-1">소개글</label>
+                    <textarea id="edit-desc" rows="2"
+                              class="w-full rounded-xl border border-stone-200 p-3 text-sm mb-5 resize-none focus:outline-none focus:ring-1 focus:ring-rose-200">{{ profile_desc }}</textarea>
+
+                    <div class="flex justify-end gap-2">
+                        <button type="button" id="settings-cancel-button"
+                                class="px-4 py-2 rounded-xl text-sm text-stone-500 bg-white border border-stone-200 hover:bg-stone-50">
+                            취소
+                        </button>
+                        <button type="submit"
+                                class="px-4 py-2 rounded-xl text-sm text-white bg-[#E68485] hover:opacity-90">
+                            저장
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+        <!-- 이웃추가 버튼 -->
+        <div class="p-4">
+    <form action="{{ url_for('add_neighbor') }}" method="post">
+        <button
+            type="submit"
+            {% if is_neighbor %}disabled{% endif %}
+            class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition
+                   {% if is_neighbor %}
+                       bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed
+                   {% else %}
+                       bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]
+                   {% endif %}"
+        >
+            {% if is_neighbor %}
+                이웃추가 완료
+            {% else %}
+                + 이웃추가
+            {% endif %}
+        </button>
+    </form>
+</div>
+
+        </div>
+
+        <!-- 카테고리창 -->
+         <div class="rounded-[20px] border border-[#E8E0D8] bg-[#FEFBF8]">
+            <nav class="px-3 pb-3 space-y-1 mt-[11px]">
+                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-50 text-brandDark font-medium text-sm">
+                    <img
+                        src="{{ url_for('static', filename='images/blog.svg') }}"
+                        alt="블로그 아이콘"
+                        class="w-4 h-4 object-contain"
+                    >
+                    블로그
+                </a>
+
+                <a href="#" class="flex items-center gap-2 px-3 py-2 rounded-xl text-stone-500 hover:bg-stone-50 text-sm">
+                    <img
+                        src="{{ url_for('static', filename='images/guestbook.svg') }}"
+                        alt="방명록 아이콘"
+                        class="w-4 h-4 object-contain"
+                    >
+                    방명록
+                </a>
+            </nav>
+        </div>
+
+        <div class="bg-card rounded-2xl shadow-sm p-4">
+    <!-- 배경음악 -->
+    <p class="text-[11px] tracking-wide text-muted font-semibold mb-2">
+        BACKGROUND MUSIC
+    </p>
+
+    <div class="flex items-center gap-3">
+
+        <div class="min-w-0 flex-1">
+
+            <p
+                id="music-title"
+                class="text-sm font-medium truncate"
+            >
+            </p>
+
+            <p
+                id="music-artist"
+                class="text-xs text-muted truncate"
+            >
+            </p>
+
+        </div>
+
+    </div>
+
+    </div>
+
+     </aside>
+
+    <!--방명록-->
+    <div class="w-[700px] h-[633.53px] shrink-0 rounded-[20px] border border-[#E8E0D8] bg-[#FEFBF8]">
+       
+        <h2 class="text-xl font-bold relative top-[27px] left-[25px]"">
+            방명록
+        </h2>
+        <!-- 방명록 입력창 -->
+         <!--방명록 글자가 mt-[25px]로 고정해 입력창도 mt-[67px]로 고정-->
+        <div class="inline-flex w-[626px] h-[50px] py-[7px] pr-[7px] pl-[17px] ml-[25px] mt-[67px] justify-end items-start gap-2 rounded-full border border-[#E8E0D8] bg-[#FBF8F5]">
+            <input
+                class="flex w-[552px] h-[20px] pl-[17px] py-[15px] items-center shrink-0 text-sm font-normal text-[#7D726A] placeholder:text-[#7D726A] placeholder:font-normal placeholder:text-sm focus:outline-none"
+                type="text"
+                placeholder="방명록을 남겨보세요."
+                />
+            <!-- 등록 버튼 -->
+            <button type="button"
+                class="flex w-[62px] h-[36px] shrink-0 px-0 pt-[10px] pr-[17.644px] pb-[11px] pl-[18px] justify-center items-center rounded-full bg-brandDark text-[13px] font-normal leading-normal text-white">
+                    등록
+            </button>
+        </div>
+        <!--방명록 목록-->
+        <!--1문단은 mt-[25px] 삽입. 입력창과 겹치는 부분이 발생함.-->
+        <li class="flex w-[650px] h-[77.92px] pl-[25px] mt-[25px] gap-2 items-center border-t border-[#E8E0D8]">
+            <span class="w-6 h-6 rounded-full bg-rose-300 shrink-0"></span>
+                <div class="min-w-0">
+                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
+                        커피한잔
+                      <span class="text-[11.5px] text-muted font-normal">· 20분 전</span></p>
+                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
+                        오늘 글 잘 보고 갑니다 :) 항상 응원해요!
+                    </p>
+                </div>
+        </li>
+
+        <li class="flex w-[650px] h-[77.92px] pl-[25px] gap-2 items-center border-t border-[#E8E0D8]">
+            <span class="w-6 h-6 rounded-full bg-green-300 shrink-0"></span>
+                <div class="min-w-0">
+                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
+                        달빛산책
+            <span class="text-[11.5px] text-muted font-normal">· 2시간 전</span></p>
+                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
+                        사진첩 새로 올라온 거 보러 왔어요~ 다음에도 기대할게요                    
+                    </p>
+                </div>
+        </li>
+
+        <li class="flex w-[650px] h-[77.92px] pl-[25px] gap-2 items-center border-t border-[#E8E0D8]">
+            <span class="w-6 h-6 rounded-full bg-amber-300 shrink-0"></span>
+                <div class="min-w-0">
+                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
+                        포근한 하루
+            <span class="text-[11.5px] text-muted font-normal">· 어제</span></p>
+                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
+                        텃밭 일기 넘 귀여워요 저도 시작해볼까 고민중 ㅎㅎ                    
+                    </p>
+                </div>
+        </li>
+
+         <li class="flex w-[650px] h-[77.92px] pl-[25px] gap-2 items-center border-t border-[#E8E0D8]">
+            <span class="w-6 h-6 rounded-full bg-orange-300 shrink-0"></span>
+                <div class="min-w-0">
+                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
+                        여름 소나기
+            <span class="text-[11.5px] text-muted font-normal">· 2일 전</span></p>
+                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
+                        제주도 여행기 잘 읽었어요! 저도 다음 달에 가는데 참고할게요                    
+                    </p>
+                </div>
+        </li>
+
+         <li class="flex w-[650px] h-[77.92px] pl-[25px] gap-2 items-center border-t border-[#E8E0D8]">
+            <span class="w-6 h-6 rounded-full bg-orange-300 shrink-0"></span>
+                <div class="min-w-0">
+                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
+                        노란우산
+            <span class="text-[11.5px] text-muted font-normal">· 3일 전</span></p>
+                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
+                        블로그 분위기가 너무 좋아요 자주 놀러올게요 :)                   
+                    </p>
+                </div>
+        </li>
+
+         <li class="flex w-[650px] h-[77.92px] pl-[25px] gap-2 items-center border-t border-[#E8E0D8]">
+            <span class="w-6 h-6 rounded-full bg-orange-300 shrink-0"></span>
+                <div class="min-w-0">
+                    <p class="text-[#362C24] font-['Gowun_Dodum'] text-[13.5px] font-normal leading-normal truncate">
+                        초록물결
+            <span class="text-[11.5px] text-muted font-normal">· 5일 전</span></p>
+                    <p class="text-[13.5px] text-[#7D726A] font-normal font-['Gowun_Dodum'] leading-[20.93px] line-clamp-2">
+                        생일 축하드려요! 늦었지만 진심으로 축하해요                   
+                    </p>
+                </div>
+        </li>
+    
+
+    </div>
+    </div>
+
+</body>
