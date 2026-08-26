@@ -5,6 +5,7 @@ from bson import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone
 import api.blog as blog_api
+import api.guestbook as guestbook_api
 import os
 import re
 
@@ -165,6 +166,7 @@ def guestbook():
     profile_color = (user or {}).get('profile_color', DEFAULT_PROFILE_COLOR)
     profile_desc = (user or {}).get('profile_desc', DEFAULT_PROFILE_DESC)
     stats = {"posts": 0, "neighbors": 0, "visitors": 0}
+    entries = guestbook_api.get_guestbooks()
 
     return render_template(
         'guestbook.html',
@@ -173,8 +175,14 @@ def guestbook():
         username=username,
         profile_color=profile_color,
         profile_desc=profile_desc,
-        active_page='guestbook'
+        active_page='guestbook',
+        entries=entries
     )
+
+@app.route('/guestbook/create', methods=['POST'])
+def create_guestbook():
+    guestbook_api.create_guestbook()
+    return redirect(url_for('guestbook'))
 
 @app.route('/create_post', methods=['POST'])
 def create_post():
