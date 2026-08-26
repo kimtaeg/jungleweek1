@@ -251,6 +251,14 @@
 
     </div>
 
+    <button
+        type="button"
+        id="logout-button"
+        class="w-full py-[11px] rounded-[10px] border border-[#E8E0D8] bg-[#FEFBF8] text-sm font-medium text-stone-500 hover:bg-[#F5F0EB] transition"
+    >
+        로그아웃
+    </button>
+
      </aside>
 
     <!--방명록-->
@@ -299,6 +307,17 @@
     </div>
 
     <script>
+            document.getElementById('logout-button').addEventListener('click', function () {
+                fetch('/logout', { method: 'POST' })
+                    .then(function () {
+                        alert('로그아웃했습니다');
+                        window.location.href = '/';
+                    })
+                    .catch(function () {
+                        alert('로그아웃 중 오류가 발생했습니다');
+                    });
+            });
+
             const editForm = document.getElementById('profile-edit-form');
             const profileImage = document.getElementById('profile-img');
             const profileImgTrigger = document.getElementById('profile-img-trigger');

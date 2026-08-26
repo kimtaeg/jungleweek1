@@ -140,16 +140,16 @@
             </div>
         </div>
 
-        <!-- 회원 목록(이웃추가) 팝업 -->
+        <!-- 이웃추가 팝업 -->
         <div id="neighbor-add-popup" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div class="bg-[#FEFBF8] rounded-[24px] p-6 w-[320px] max-h-[70vh] flex flex-col shadow-lg">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-sm">회원 목록</h3>
+                    <h3 class="font-bold text-sm">이웃 목록</h3>
                     <button id="neighbor-add-close-button" type="button" class="text-stone-400 hover:text-stone-600">✕</button>
                 </div>
                 <div class="overflow-y-auto space-y-2">
                     {% for u in all_users %}
-                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-stone-100">
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-[#E8E0D8] bg-[#FBF8F5]">
                         <span class="text-sm">{{ u.username }}</span>
                         <button
                             type="button"
@@ -177,8 +177,15 @@
                 </div>
                 <div class="overflow-y-auto space-y-2">
                     {% for n in neighbor_list %}
-                    <div class="px-3 py-2 rounded-xl border border-stone-100 text-sm">
-                        {{ n.username }}
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-[#E8E0D8] bg-[#FBF8F5] text-sm">
+                        <span>{{ n.username }}</span>
+                        <button
+                            type="button"
+                            class="neighbor-profile-button px-3 py-1 rounded-lg text-xs font-medium border border-[#338D6B] bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]"
+                            data-user-id="{{ n._id }}"
+                        >
+                            프로필
+                        </button>
                     </div>
                     {% else %}
                     <p id="neighbor-list-empty" class="text-xs text-stone-400 text-center py-4">아직 추가한 이웃이 없습니다</p>
@@ -251,6 +258,13 @@
 
 </div>
 
+    <button
+        type="button"
+        id="logout-button"
+        class="w-full py-[11px] rounded-[10px] border border-[#E8E0D8] bg-[#FEFBF8] text-sm font-medium text-stone-500 hover:bg-[#F5F0EB] transition"
+    >
+        로그아웃
+    </button>
 
      </aside>
 
@@ -465,6 +479,17 @@
     </div>
 
     <script>
+            document.getElementById('logout-button').addEventListener('click', function () {
+                fetch('/logout', { method: 'POST' })
+                    .then(function () {
+                        alert('로그아웃했습니다');
+                        window.location.href = '/';
+                    })
+                    .catch(function () {
+                        alert('로그아웃 중 오류가 발생했습니다');
+                    });
+            });
+
             const editForm = document.getElementById('profile-edit-form');
             const profileImage = document.getElementById('profile-img');
             const profileImgTrigger = document.getElementById('profile-img-trigger');
