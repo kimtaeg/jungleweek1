@@ -33,7 +33,7 @@
             <div class="w-[760px] flex flex-col">
                 <!--상단바-->
                 <div class="flex items-center justify-between mb-[24px] text-[14px] text-top-text not-italic w-full">
-                    <a href="{{ url_for('blogPost') }}" class="flex items-center">
+                    <a href="{{ url_for('post_detail', post_id=post._id) }}" class="flex items-center">
                         <img
                         src="{{ url_for('static', filename='images/Vector.png') }}"
                         class="pr-[6px]">
@@ -59,6 +59,7 @@
                             name="title"
                             required
                             placeholder="제목을 입력하세요"
+                            value="{{ post.title }}"
                             class="font-jua text-[28px] bg-transparent outline-none w-full text-main-text placeholder:text-top-text"
                         >
                     </div>
@@ -96,7 +97,7 @@
                         placeholder="오늘의 이야기를 적어보세요..."
                         rows="12"
                         class="w-[760px] mt-[31px] text-main-text text-[15px] font-gowun bg-transparent outline-none resize-none placeholder:text-top-text"
-                    ></textarea>
+                    >{{ post.content if post else '' }}</textarea>
                 </form>
 
             </div>
