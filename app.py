@@ -126,9 +126,6 @@ def blogPost():
         profile_desc=profile_desc
     )
 
-
-
-
 @app.route('/profile/update', methods=['POST'])
 def update_profile():
     user_id = session.get('user_id')
@@ -174,7 +171,7 @@ def create_post():
 @app.route('/update_post/<post_id>', methods=['GET'])
 def update_post(post_id):
     post = db.blog.find_one({"_id": ObjectId(post_id)})
-    return render_template('writing.html',post = post)
+    return render_template('update_blog.html',post = post)
 
 @app.route('/delte_post/<post_id>', methods=['GET'])
 def delete_post(post_id):
