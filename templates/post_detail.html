@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html long="ko">
     <head>
         <meta charset="utf-8"/>
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,14 +54,14 @@
                 <div class="mt-[50px]">
                     <div class="flex items-center justify-between">
                         <div class="font-jua text-[28px]">
-                            제목
+                            {{title}}
                         </div>
                     </div>
                     <div class="flex items-center gap-[8px] mt-[8px] text-[14px] text-top-text">
                         <div class="w-[24px] h-[24px] rounded-full bg-[#D9A9A4]"></div>
                         <span>몽글몽글</span>
                         <span>·</span>
-                        <span>2026.08.24</span>
+                        <span>{{created_at}}</span>
                     </div>
                 </div>
                 <!--대표사진-->
@@ -69,14 +69,14 @@
                 </div>
                 <!--글-->
                 <div class="w-[760px] mt-[31px] text-main-text text-[15px] font-gowun">
-                    안녕
+                    {{content}}
                 </div>
                 <hr class="border-t-[2px] border-border-color mt-[36px]">
                 <!--좋아요/댓글-->
                 <div class="flex items-center mt-[25px] gap-[8px] mt-[16px] text-[14px] text-top-text">
                     <button id="like-btn" onclick="toggleLike()" class="flex items-center gap-[6px] rounded-full px-[12px] py-[6px] border border-border-color text-top-text">
                         <img id="like-icon" src="{{ url_for('static', filename='images/heart.png') }}" class="w-[14px] h-[14px]">
-                        <span id="like-count">좋아요 24</span>
+                        <span id="like-count">좋아요 {{likes}}</span>
                     </button>
                     <div class="flex items-center gap-[6px] rounded-full px-[12px] py-[6px] border border-border-color">
                         <img src="{{ url_for('static', filename='images/chat.png') }}" class="w-[14px] h-[14px]">
@@ -97,3 +97,4 @@
         </script>
     </body>
 </html>
+
