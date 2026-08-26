@@ -27,7 +27,7 @@ def get_blogs():
 @app.route("/blogs", methods=['POST'])
 def create_blog():
     author_id = ObjectId(session.get('user_id'))
-    created_at = datetime.now()
+    created_at = datetime.now().strftime('%Y-%m-%d %H:%M')
     # blog_post.html에서 받은 폼 - 제목
     title = request.form.get('title')
     # blog_post.html에서 받은 폼 - 내용
