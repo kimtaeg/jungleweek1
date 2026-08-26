@@ -63,14 +63,14 @@
                     </span>
                 </div>
 
-                <div class="flex-1 text-center mt-[17px] px-2 border-r border-stone-200">
-                    <p class="text-xl font-semibold">
+                <button type="button" id="neighbor-list-button" class="flex-1 text-center mt-[17px] px-2 border-r border-stone-200">
+                    <p id="neighbor-count" class="text-xl font-semibold">
                         {{ stats.neighbors }}
                     </p>
                     <span class="text-xs text-stone-500">
                         이웃
                     </span>
-                </div>
+                </button>
 
                 <div class="flex-1 text-center mt-[17px] px-2">
                     <p class="text-xl font-semibold">
@@ -140,23 +140,60 @@
             </div>
         </div>
 
+        <!-- 회원 목록(이웃추가) 팝업 -->
+        <div id="neighbor-add-popup" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-[#FEFBF8] rounded-[24px] p-6 w-[320px] max-h-[70vh] flex flex-col shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-sm">회원 목록</h3>
+                    <button id="neighbor-add-close-button" type="button" class="text-stone-400 hover:text-stone-600">✕</button>
+                </div>
+                <div class="overflow-y-auto space-y-2">
+                    {% for u in all_users %}
+                    <div class="flex items-center justify-between px-3 py-2 rounded-xl border border-stone-100">
+                        <span class="text-sm">{{ u.username }}</span>
+                        <button
+                            type="button"
+                            class="neighbor-add-user-button px-3 py-1 rounded-lg text-xs font-medium border border-[#338D6B]
+                                   {% if u.is_added %}bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed{% else %}bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]{% endif %}"
+                            data-target-id="{{ u._id }}"
+                            {% if u.is_added %}disabled{% endif %}
+                        >
+                            {% if u.is_added %}완료{% else %}+ 추가{% endif %}
+                        </button>
+                    </div>
+                    {% else %}
+                    <p class="text-xs text-stone-400 text-center py-4">추가할 회원이 없습니다</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 이웃 목록 팝업 -->
+        <div id="neighbor-list-popup" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div class="bg-[#FEFBF8] rounded-[24px] p-6 w-[320px] max-h-[70vh] flex flex-col shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-sm">이웃 목록</h3>
+                    <button id="neighbor-list-close-button" type="button" class="text-stone-400 hover:text-stone-600">✕</button>
+                </div>
+                <div class="overflow-y-auto space-y-2">
+                    {% for n in neighbor_list %}
+                    <div class="px-3 py-2 rounded-xl border border-stone-100 text-sm">
+                        {{ n.username }}
+                    </div>
+                    {% else %}
+                    <p id="neighbor-list-empty" class="text-xs text-stone-400 text-center py-4">아직 추가한 이웃이 없습니다</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
         <div class="p-4">
     <button
         type="button"
-        {% if is_neighbor %}disabled{% endif %}
-        onclick="alert('아직 구현되지 않은 기능입니다.')"
-        class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition
-               {% if is_neighbor %}
-                   bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed
-               {% else %}
-                   bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]
-               {% endif %}"
+        id="neighbor-add-open-button"
+        class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]"
     >
-        {% if is_neighbor %}
-            이웃추가 완료
-        {% else %}
-            + 이웃추가
-        {% endif %}
+        + 이웃추가
     </button>
 </div>
 
@@ -401,6 +438,19 @@
                 <h3 class="text-sm font-bold">방문록</h3>
                 <a href="/guestbook" class="text-[11px] text-muted hover:text-brandDark">자세히</a>
             </div>
+            <ul class="space-y-2">
+                {% for e in guestbook_entries %}
+                <li class="flex items-start gap-2 text-xs border-t border-stone-100 pt-2">
+                    <span class="w-[20px] h-[20px] rounded-full shrink-0" style="background-color: {{ e.writer_color }}"></span>
+                    <div class="min-w-0">
+                        <p class="font-medium truncate">{{ e.writer_name }} <span class="text-muted">· {{ e.time_ago }}</span></p>
+                        <p class="text-muted truncate">{{ e.content }}</p>
+                    </div>
+                </li>
+                {% else %}
+                <li class="text-xs text-muted">아직 방명록이 없어요.</li>
+                {% endfor %}
+            </ul>
             <div class="mt-4 flex items-center gap-1">
                 <input type="text" placeholder="메시지를 남겨보세요"
                        class="flex-1 min-w-0 text-xs rounded-full border border-stone-200 px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-rose-200">
@@ -487,6 +537,60 @@
             settingsPopup.addEventListener('click', (event) => {
                 if (event.target === settingsPopup) settingsPopup.hidden = true;
             });
+
+            const neighborAddOpenButton = document.getElementById('neighbor-add-open-button');
+            const neighborAddPopup = document.getElementById('neighbor-add-popup');
+            const neighborAddCloseButton = document.getElementById('neighbor-add-close-button');
+            const neighborCount = document.getElementById('neighbor-count');
+
+            neighborAddOpenButton.addEventListener('click', () => { neighborAddPopup.hidden = false; });
+            neighborAddCloseButton.addEventListener('click', () => { neighborAddPopup.hidden = true; });
+            neighborAddPopup.addEventListener('click', (event) => {
+                if (event.target === neighborAddPopup) neighborAddPopup.hidden = true;
+            });
+
+            neighborAddPopup.querySelectorAll('.neighbor-add-user-button').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.targetId;
+                    fetch('{{ url_for("add_neighbor") }}', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ target_id: targetId })
+                    })
+                        .then((response) => response.json().then((data) => ({ ok: response.ok, data })))
+                        .then(({ ok, data }) => {
+                            if (!ok) {
+                                alert(data.message || '이웃추가에 실패했습니다');
+                                return;
+                            }
+                            button.textContent = '완료';
+                            button.disabled = true;
+                            button.classList.remove('bg-[#FEFBF8]', 'text-[#338D6B]', 'hover:bg-[#F5F0EB]');
+                            button.classList.add('bg-stone-100', 'text-stone-400', 'border-stone-300', 'cursor-not-allowed');
+                            neighborCount.textContent = data.neighbor_count;
+
+                            const emptyMessage = document.getElementById('neighbor-list-empty');
+                            if (emptyMessage) emptyMessage.remove();
+                            const username = button.closest('div').querySelector('span').textContent;
+                            const neighborItem = document.createElement('div');
+                            neighborItem.className = 'px-3 py-2 rounded-xl border border-stone-100 text-sm';
+                            neighborItem.textContent = username;
+                            neighborListPopup.querySelector('.overflow-y-auto').appendChild(neighborItem);
+                        })
+                        .catch(() => alert('이웃추가 중 오류가 발생했습니다'));
+                });
+            });
+
+            const neighborListButton = document.getElementById('neighbor-list-button');
+            const neighborListPopup = document.getElementById('neighbor-list-popup');
+            const neighborListCloseButton = document.getElementById('neighbor-list-close-button');
+
+            neighborListButton.addEventListener('click', () => { neighborListPopup.hidden = false; });
+            neighborListCloseButton.addEventListener('click', () => { neighborListPopup.hidden = true; });
+            neighborListPopup.addEventListener('click', (event) => {
+                if (event.target === neighborListPopup) neighborListPopup.hidden = true;
+            });
+
             const postSection = document.querySelector('[aria-label="게시글 목록"]');
             const sortSelect = document.getElementById('sort-select');
 
