@@ -81,6 +81,10 @@ def blogPost():
     stats = {"posts": 0, "neighbors": 0, "visitors": 0}
     return render_template('blog_post.html', stats=stats, posts=[], is_neighbor=False)
 
+@app.route('/writing')
+def writing():
+    return render_template('writing.html')
+
 @app.route('/add_neighbor', methods=['POST'])
 def add_neighbor():
     return redirect(url_for('blogPost'))

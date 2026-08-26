@@ -39,7 +39,9 @@
             <div class="pt-2 pb-5 px-5 text-center">
 
                 <h2 id="profile-name" class="text-base font-bold text-center">
-                    몽글몽글
+                    <div class="profile-name">
+                     {{ username }}
+                    </div>
                 </h2>
 
                 <p class="flex h-[31px] mt-[10px] px-[14px] py-[6px] justify-center items-center rounded-full bg-[#FBF0E6] text-[13px] text-[#7D726A] text-center font-['Gowun_Dodum'] text-[13px] font-normal leading-normal">
@@ -196,7 +198,7 @@
             </form>
 
             <a
-                href="{{ url_for('create_post') }}"
+                href="{{ url_for('writing') }}"
                 class="flex items-center gap-1 text-sm font-medium text-white bg-brandDark rounded-full px-4 py-2 hover:opacity-90 transition"
             >
                 <svg
