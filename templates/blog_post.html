@@ -141,23 +141,24 @@
         </div>
 
         <div class="p-4">
-    <button
-        type="button"
-        {% if is_neighbor %}disabled{% endif %}
-        onclick="alert('아직 구현되지 않은 기능입니다.')"
-        class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition
-               {% if is_neighbor %}
-                   bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed
-               {% else %}
-                   bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]
-               {% endif %}"
-    >
-        {% if is_neighbor %}
-            이웃추가 완료
-        {% else %}
-            + 이웃추가
-        {% endif %}
-    </button>
+    <form action="{{ url_for('add_neighbor') }}" method="post">
+        <button
+            type="submit"
+            {% if is_neighbor %}disabled{% endif %}
+            class="flex w-[238px] py-[11px] justify-center items-center gap-[6px] rounded-[10px] border border-[#338D6B] text-sm font-medium transition
+                   {% if is_neighbor %}
+                       bg-stone-100 text-stone-400 border-stone-300 cursor-not-allowed
+                   {% else %}
+                       bg-[#FEFBF8] text-[#338D6B] hover:bg-[#F5F0EB]
+                   {% endif %}"
+        >
+            {% if is_neighbor %}
+                이웃추가 완료
+            {% else %}
+                + 이웃추가
+            {% endif %}
+        </button>
+    </form>
 </div>
 
         </div>
@@ -354,7 +355,7 @@
                              alt="좋아요 아이콘"
                             class="w-4 h-4 object-contain"
                             >
-                            {{ post.likes_count }}
+                            {{ post.likes_count  | default(0)}}
                         </span>
 
                         <span class="flex items-center gap-1">
@@ -363,7 +364,7 @@
                              alt="댓글 아이콘"
                             class="w-4 h-4 object-contain"
                             >
-                            {{ post.comments_count }}
+                            {{ post.comments_count  | default(0)}}
                         </span>
 
                     </div>
@@ -565,3 +566,4 @@
         </script>
     </body>
 </html>
+

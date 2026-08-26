@@ -4,11 +4,16 @@ from pymongo import MongoClient
 from bson import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone
+import api.blog as blog_api
 import os
+import re
+
+
 app = Flask(__name__)
 
 DEFAULT_PROFILE_COLOR = "#E68485"
 DEFAULT_PROFILE_DESC = "오늘도 몽글몽글하게:)"
+COLOR_RE = re.compile(r'^#[0-9A-Fa-f]{6}$')
 
 load_dotenv()
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
@@ -78,7 +83,7 @@ def signup():
     return jsonify({"message": "회원가입이 완료되었습니다"}), 200
 
 @app.route('/post_detail')
-def postDetail():
+def post_detail():
     return render_template('post_detail.html')
 
 @app.route('/blog_post')
@@ -93,18 +98,22 @@ def blogPost():
     username = user['username'] if user else '몽글몽글'
     profile_color = (user or {}).get('profile_color', DEFAULT_PROFILE_COLOR)
     profile_desc = (user or {}).get('profile_desc', DEFAULT_PROFILE_DESC)
-    view = request.args.get('view', 'blog')
+
+    # /api/blog.py의 get_blogs 함수 호출 (db에서 블로그 불러오기)
+    posted_blogs = blog_api.get_blogs()
 
     return render_template(
         'blog_post.html',
         stats=stats,
-        posts=[],
+        posts=posted_blogs,  # blog_post.html에 블로그 전달
         is_neighbor=False,
         username=username,
         profile_color=profile_color,
-        profile_desc=profile_desc,
-        view=view
+        profile_desc=profile_desc
     )
+
+
+
 
 @app.route('/profile/update', methods=['POST'])
 def update_profile():
@@ -116,6 +125,9 @@ def update_profile():
     username = (data.get('username') or '').strip()
     description = (data.get('description') or '').strip()
     color = (data.get('color') or '').strip()
+
+    if not username or not description or not COLOR_RE.match(color):
+        return jsonify({"message": "입력값을 확인해주세요"}), 400
 
     db.user.update_one(
         {"_id": ObjectId(user_id)},
@@ -141,8 +153,9 @@ def writing():
 def add_neighbor():
     return redirect(url_for('blogPost'))
 
-@app.route('/create_post')
+@app.route('/create_post', methods=['POST'])
 def create_post():
-    return redirect(url_for('blogPost'))
+    return blog_api.create_blog()
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
