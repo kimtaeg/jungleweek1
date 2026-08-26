@@ -379,7 +379,7 @@
                 <div class="flex items-center justify-between mt-3">
 
                     <span class="text-[11px] text-muted">
-                        {{ post.created_at.strftime('%m.%d') if post.created_at else '' }}
+                        {{ post.created_at if post.created_at else '' }}
                     </span>
 
 
