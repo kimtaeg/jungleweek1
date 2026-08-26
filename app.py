@@ -136,6 +136,10 @@ def update_profile():
         "profile_color": color
     }), 200
 
+@app.route('/writing')
+def writing():
+    return render_template('writing.html')
+
 @app.route('/add_neighbor', methods=['POST'])
 def add_neighbor():
     return redirect(url_for('blogPost'))
