@@ -82,9 +82,66 @@ def signup():
     })
     return jsonify({"message": "회원가입이 완료되었습니다"}), 200
 
-@app.route('/post_detail')
-def post_detail():
-    return render_template('post_detail.html')
+@app.route('/post_detail/<post_id>')
+def post_detail(post_id):
+    post = db.blog.find_one({"_id": ObjectId(post_id)})
+    if not post:
+        return jsonify({"message": "게시글을 찾을 수 없습니다"}), 404
+
+    user_id = session.get('user_id')
+    liked = bool(user_id) and user_id in post.get('liked_by', [])
+
+    return render_template(
+        'post_detail.html',
+        title=post['title'],
+        content=post['content'],
+        likes=post.get('likes', 0),
+        created_at=post['created_at'],
+        post_id=str(post['_id']),
+        liked=liked
+    )
+
+@app.route('/posts/<post_id>/like', methods=['POST'])
+def like_post(post_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"message": "로그인이 필요합니다"}), 401
+
+    post = db.blog.find_one({"_id": ObjectId(post_id)})
+    if not post:
+        return jsonify({"message": "게시글을 찾을 수 없습니다"}), 404
+
+    likes = post.get("likes", 0)
+    if user_id not in post.get("liked_by", []):
+        db.blog.update_one(
+            {"_id": ObjectId(post_id)},
+            {"$inc": {"likes": 1}, "$addToSet": {"liked_by": user_id}}
+        )
+        likes += 1
+
+    return jsonify({"likes": likes, "liked": True}), 200
+
+#좋아요 취소
+@app.route('/posts/<post_id>/unlike', methods=['POST'])
+def unlike_post(post_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({"message": "로그인이 필요합니다"}), 401
+
+    post = db.blog.find_one({"_id": ObjectId(post_id)})
+    if not post:
+        return jsonify({"message": "게시글을 찾을 수 없습니다"}), 404
+
+    likes = post.get("likes", 0)
+    if user_id in post.get("liked_by", []):
+        db.blog.update_one(
+            {"_id": ObjectId(post_id)},
+            {"$inc": {"likes": -1}, "$pull": {"liked_by": user_id}}
+        )
+        likes -= 1
+
+    return jsonify({"likes": likes, "liked": False}), 200
+
 
 @app.route('/blog_post')
 def blogPost():
