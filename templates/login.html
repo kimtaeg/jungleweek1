@@ -40,7 +40,11 @@
     <!-- 메인 프레임 -->
     <div class="w-full flex justify-center">
         <!-- 왼쪽 화면 프레임 -->
-        <div class="w-2/5 min-h-[900px] flex-col justify-center items-center bg-[url('/static/images/left_brand_panel.svg')]"></div>
+        <div class="w-2/5 h-full flex-col justify-center items-center">
+            <img
+                    src="{{ url_for('static', filename='images/Left_brand_panel.png') }}"
+                    class="w-full h-full object-cover block">
+        </div>
 
         <!-- 오른쪽 화면 프레임 (배경색 및 내부 중앙 정렬) -->
         <div class="w-3/5 min-h-[900px] flex flex-col justify-center items-center bg-[#FEFBF8] p-8">
