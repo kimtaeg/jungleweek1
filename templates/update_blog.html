@@ -50,7 +50,7 @@
                     </div>
                 </div>
                 <!--글 작성 폼-->
-                <form id="post-form" method="post" enctype="multipart/form-data" action="{{ url_for('create_post') }}">
+                <form id="post-form" method="post" enctype="multipart/form-data" action="{{ url_for('update_post_submit', post_id=post._id) }}">
                     <!--제목-->
                     
                     <div class="<h2 class="text-[#A49D97] font-['Jua'] text-[23px] font-normal leading-normal mt-[50px]">

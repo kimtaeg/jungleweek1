@@ -273,6 +273,10 @@ def update_post(post_id):
     post = db.blog.find_one({"_id": ObjectId(post_id)})
     return render_template('update_blog.html',post = post)
 
+@app.route('/update_post/<post_id>', methods=['POST'])
+def update_post_submit(post_id):
+    return blog_api.update_blog(post_id)
+
 @app.route('/delte_post/<post_id>', methods=['GET'])
 def delete_post(post_id):
     db.blog.delete_one({'_id': ObjectId(post_id)})
