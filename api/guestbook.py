@@ -28,8 +28,9 @@ def format_time_ago(created_at):
 
 
 # 방명록 조회 (read)
-def get_guestbooks():
-    entries = list(db.guestbook.find({}).sort('created_at', DESCENDING).limit(20))
+def get_guestbooks(user_id=None):
+    query = {"writer_id": ObjectId(user_id)} if user_id else {}
+    entries = list(db.guestbook.find(query).sort('created_at', DESCENDING).limit(20))
 
     for e in entries:
         writer = db.user.find_one({"_id": e.get('writer_id')}) if e.get('writer_id') else None
