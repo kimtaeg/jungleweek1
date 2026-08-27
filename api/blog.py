@@ -16,9 +16,10 @@ db = client.dbjungle
 # # 게시글 crud
 # # 1. 게시글 조회 (read)
 @app.route("/blogs", methods=['GET'])
-def get_blogs():
-    # db에서 가장 최신 블로그 네 개 불러오기
-    blogs = list(db.blog.find({}).sort('created_at', DESCENDING).limit(4))
+def get_blogs(user_id=None):
+    # 로그인한 사람의 글만 불러오기 (가장 최신 네 개)
+    query = {"author_id": ObjectId(user_id)} if user_id else {}
+    blogs = list(db.blog.find(query).sort('created_at', DESCENDING).limit(4))
 
     return blogs
 
