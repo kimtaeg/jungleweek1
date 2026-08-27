@@ -163,7 +163,7 @@ def blogPost():
 
     # /api/blog.py의 get_blogs 함수 호출 (db에서 로그인한 사람의 블로그만 불러오기)
     posted_blogs = blog_api.get_blogs(user_id)
-    guestbook_entries = guestbook_api.get_guestbooks()[:3]
+    guestbook_entries = guestbook_api.get_guestbooks(user_id)[:3]
 
     return render_template(
         'blog_post.html',
@@ -244,8 +244,9 @@ def guestbook():
     neighbor_count = neighbor_api.count_neighbors(user_id) if user_id else 0
     all_users = neighbor_api.get_all_users(user_id) if user_id else []
     neighbor_list = neighbor_api.get_neighbors(user_id) if user_id else []
-    stats = {"posts": db.blog.count_documents({}), "neighbors": neighbor_count, "visitors": 0}
-    entries = guestbook_api.get_guestbooks()
+    posts_count = db.blog.count_documents({"author_id": ObjectId(user_id)}) if user_id else 0
+    stats = {"posts": posts_count, "neighbors": neighbor_count, "visitors": 0}
+    entries = guestbook_api.get_guestbooks(user_id)
 
     return render_template(
         'guestbook.html',
